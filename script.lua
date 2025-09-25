@@ -1,294 +1,58 @@
--- 小风脚本UI源码
+-- 罗布乐思脚本UI源码 - 小风专属版
 -- 完全公益，请勿倒卖
 -- UI作者：小风 | 快手账号：小车 | 快手号：QQ3867888
 
--- 创建主UI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "XiaoFengScriptUI"
-ScreenGui.Parent = game.CoreGui
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("小风脚本 - 完全公益版", "DarkTheme")
 
-local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MainFrame.BorderSizePixel = 0
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Size = UDim2.new(0, 450, 0, 350)
-MainFrame.Active = true
-MainFrame.Draggable = true
+-- ===== 公告页面 =====
+local AnnouncementTab = Window:NewTab("公告")
+local AnnouncementSection = AnnouncementTab:NewSection("公告信息")
 
-local TopBar = Instance.new("Frame")
-TopBar.Name = "TopBar"
-TopBar.Parent = MainFrame
-TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-TopBar.BorderSizePixel = 0
-TopBar.Size = UDim2.new(1, 0, 0, 30)
+-- 公告内容
+AnnouncementSection:NewLabel("完全公益，请勿倒卖")
+AnnouncementSection:NewLabel("UI作者：小风")
+AnnouncementSection:NewLabel("快手账号：小车")
+AnnouncementSection:NewLabel("快手号：QQ3867888")
+AnnouncementSection:NewLabel("感谢使用!")
 
-local Title = Instance.new("TextLabel")
-Title.Name = "Title"
-Title.Parent = TopBar
-Title.BackgroundTransparency = 1
-Title.Size = UDim2.new(0.7, 0, 1, 0)
-Title.Font = Enum.Font.GothamBold
-Title.Text = "小风脚本 - 完全公益"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 14
+-- 不可用按钮
+AnnouncementSection:NewButton("不可用按钮", "此按钮不可用", function()
+    -- 空函数，按钮不可用
+end)
 
-local CloseButton = Instance.new("TextButton")
-CloseButton.Name = "CloseButton"
-CloseButton.Parent = TopBar
-CloseButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-CloseButton.BorderSizePixel = 0
-CloseButton.Position = UDim2.new(0.85, 0, 0, 0)
-CloseButton.Size = UDim2.new(0.15, 0, 1, 0)
-CloseButton.Font = Enum.Font.Gotham
-CloseButton.Text = "隐藏"
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.TextSize = 14
+AnnouncementSection:NewToggle("不可用切换", "此切换不可用", function(state)
+    -- 空函数，切换不可用
+end)
 
-local TabButtons = Instance.new("Frame")
-TabButtons.Name = "TabButtons"
-TabButtons.Parent = MainFrame
-TabButtons.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-TabButtons.BorderSizePixel = 0
-TabButtons.Position = UDim2.new(0, 0, 0, 30)
-TabButtons.Size = UDim2.new(1, 0, 0, 40)
+-- ===== 通用脚本页面 =====
+local GeneralTab = Window:NewTab("通用脚本")
+local GeneralSection = GeneralTab:NewSection("通用功能")
 
-local AnnouncementTabBtn = Instance.new("TextButton")
-AnnouncementTabBtn.Name = "AnnouncementTabBtn"
-AnnouncementTabBtn.Parent = TabButtons
-AnnouncementTabBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-AnnouncementTabBtn.BorderSizePixel = 0
-AnnouncementTabBtn.Position = UDim2.new(0, 0, 0, 0)
-AnnouncementTabBtn.Size = UDim2.new(0.33, 0, 1, 0)
-AnnouncementTabBtn.Font = Enum.Font.Gotham
-AnnouncementTabBtn.Text = "公告"
-AnnouncementTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-AnnouncementTabBtn.TextSize = 14
-
-local GeneralTabBtn = Instance.new("TextButton")
-GeneralTabBtn.Name = "GeneralTabBtn"
-GeneralTabBtn.Parent = TabButtons
-GeneralTabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-GeneralTabBtn.BorderSizePixel = 0
-GeneralTabBtn.Position = UDim2.new(0.33, 0, 0, 0)
-GeneralTabBtn.Size = UDim2.new(0.34, 0, 1, 0)
-GeneralTabBtn.Font = Enum.Font.Gotham
-GeneralTabBtn.Text = "通用脚本"
-GeneralTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-GeneralTabBtn.TextSize = 14
-
-local AbandonedTabBtn = Instance.new("TextButton")
-AbandonedTabBtn.Name = "AbandonedTabBtn"
-AbandonedTabBtn.Parent = TabButtons
-AbandonedTabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-AbandonedTabBtn.BorderSizePixel = 0
-AbandonedTabBtn.Position = UDim2.new(0.67, 0, 0, 0)
-AbandonedTabBtn.Size = UDim2.new(0.33, 0, 1, 0)
-AbandonedTabBtn.Font = Enum.Font.Gotham
-AbandonedTabBtn.Text = "被遗弃"
-AbandonedTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-AbandonedTabBtn.TextSize = 14
-
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Name = "ContentFrame"
-ContentFrame.Parent = MainFrame
-ContentFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-ContentFrame.BorderSizePixel = 0
-ContentFrame.Position = UDim2.new(0, 0, 0, 70)
-ContentFrame.Size = UDim2.new(1, 0, 1, -70)
-
--- 公告页面
-local AnnouncementPage = Instance.new("Frame")
-AnnouncementPage.Name = "AnnouncementPage"
-AnnouncementPage.Parent = ContentFrame
-AnnouncementPage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-AnnouncementPage.BorderSizePixel = 0
-AnnouncementPage.Size = UDim2.new(1, 0, 1, 0)
-AnnouncementPage.Visible = true
-
-local AnnouncementText = Instance.new("TextLabel")
-AnnouncementText.Parent = AnnouncementPage
-AnnouncementText.BackgroundTransparency = 1
-AnnouncementText.Position = UDim2.new(0.1, 0, 0.1, 0)
-AnnouncementText.Size = UDim2.new(0.8, 0, 0.6, 0)
-AnnouncementText.Font = Enum.Font.Gotham
-AnnouncementText.Text = "完全公益，请勿倒卖\nUI作者：小风\n快手账号：小车\n快手号：QQ3867888\n感谢使用!"
-AnnouncementText.TextColor3 = Color3.fromRGB(255, 255, 255)
-AnnouncementText.TextSize = 16
-AnnouncementText.TextWrapped = true
-AnnouncementText.TextYAlignment = Enum.TextYAlignment.Top
-
-local DisabledButton = Instance.new("TextButton")
-DisabledButton.Parent = AnnouncementPage
-DisabledButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-DisabledButton.BorderSizePixel = 0
-DisabledButton.Position = UDim2.new(0.3, 0, 0.7, 0)
-DisabledButton.Size = UDim2.new(0.4, 0, 0.1, 0)
-DisabledButton.Font = Enum.Font.Gotham
-DisabledButton.Text = "不可用按钮"
-DisabledButton.TextColor3 = Color3.fromRGB(150, 150, 150)
-DisabledButton.TextSize = 14
-
--- 通用脚本页面
-local GeneralPage = Instance.new("Frame")
-GeneralPage.Name = "GeneralPage"
-GeneralPage.Parent = ContentFrame
-GeneralPage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-GeneralPage.BorderSizePixel = 0
-GeneralPage.Size = UDim2.new(1, 0, 1, 0)
-GeneralPage.Visible = false
-
--- 被遗弃页面
-local AbandonedPage = Instance.new("Frame")
-AbandonedPage.Name = "AbandonedPage"
-AbandonedPage.Parent = ContentFrame
-AbandonedPage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-AbandonedPage.BorderSizePixel = 0
-AbandonedPage.Size = UDim2.new(1, 0, 1, 0)
-AbandonedPage.Visible = false
-
--- 创建按钮函数
-local function createButton(parent, text, position, size, callback)
-    local button = Instance.new("TextButton")
-    button.Parent = parent
-    button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    button.BorderSizePixel = 0
-    button.Position = position
-    button.Size = size or UDim2.new(0.4, 0, 0, 30)
-    button.Font = Enum.Font.Gotham
-    button.Text = text
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextSize = 14
-    
-    if callback then
-        button.MouseButton1Click:Connect(callback)
-    end
-    
-    return button
-end
-
--- 创建滑动条函数
-local function createSlider(parent, text, position, min, max, callback)
-    local frame = Instance.new("Frame")
-    frame.Parent = parent
-    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    frame.BorderSizePixel = 0
-    frame.Position = position
-    frame.Size = UDim2.new(0.4, 0, 0, 50)
-    
-    local label = Instance.new("TextLabel")
-    label.Parent = frame
-    label.BackgroundTransparency = 1
-    label.Position = UDim2.new(0, 0, 0, 0)
-    label.Size = UDim2.new(1, 0, 0.4, 0)
-    label.Font = Enum.Font.Gotham
-    label.Text = text
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.TextSize = 12
-    
-    local slider = Instance.new("Frame")
-    slider.Parent = frame
-    slider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    slider.BorderSizePixel = 0
-    slider.Position = UDim2.new(0, 0, 0.4, 0)
-    slider.Size = UDim2.new(1, 0, 0.3, 0)
-    
-    local fill = Instance.new("Frame")
-    fill.Parent = slider
-    fill.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-    fill.BorderSizePixel = 0
-    fill.Size = UDim2.new(0.5, 0, 1, 0)
-    
-    local valueLabel = Instance.new("TextLabel")
-    valueLabel.Parent = frame
-    valueLabel.BackgroundTransparency = 1
-    valueLabel.Position = UDim2.new(0, 0, 0.7, 0)
-    valueLabel.Size = UDim2.new(1, 0, 0.3, 0)
-    valueLabel.Font = Enum.Font.Gotham
-    valueLabel.Text = "50"
-    valueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    valueLabel.TextSize = 12
-    
-    return {frame = frame, fill = fill, value = valueLabel}
-end
-
--- 创建切换按钮函数
-local function createToggle(parent, text, position, callback)
-    local frame = Instance.new("Frame")
-    frame.Parent = parent
-    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    frame.BorderSizePixel = 0
-    frame.Position = position
-    frame.Size = UDim2.new(0.4, 0, 0, 30)
-    
-    local label = Instance.new("TextLabel")
-    label.Parent = frame
-    label.BackgroundTransparency = 1
-    label.Position = UDim2.new(0, 0, 0, 0)
-    label.Size = UDim2.new(0.7, 0, 1, 0)
-    label.Font = Enum.Font.Gotham
-    label.Text = text
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
-    label.TextSize = 14
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    
-    local toggle = Instance.new("Frame")
-    toggle.Parent = frame
-    toggle.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-    toggle.BorderSizePixel = 0
-    toggle.Position = UDim2.new(0.8, 0, 0.2, 0)
-    toggle.Size = UDim2.new(0.2, 0, 0.6, 0)
-    
-    local toggleFill = Instance.new("Frame")
-    toggleFill.Parent = toggle
-    toggleFill.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-    toggleFill.BorderSizePixel = 0
-    toggleFill.Position = UDim2.new(0.1, 0, 0.1, 0)
-    toggleFill.Size = UDim2.new(0.4, 0, 0.8, 0)
-    
-    local state = false
-    
-    frame.MouseButton1Click:Connect(function()
-        state = not state
-        if state then
-            toggleFill.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
-            toggleFill.Position = UDim2.new(0.5, 0, 0.1, 0)
-        else
-            toggleFill.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-            toggleFill.Position = UDim2.new(0.1, 0, 0.1, 0)
-        end
-        
-        if callback then
-            callback(state)
-        end
-    end)
-    
-    return {frame = frame, state = state}
-end
-
--- 添加通用脚本功能
+-- 飞行功能
 local flying = false
 local flySpeed = 50
 local flyConnection
 
-local flyToggle = createToggle(GeneralPage, "飞行", UDim2.new(0.05, 0, 0.05, 0), function(state)
+GeneralSection:NewToggle("飞行", "启用/禁用飞行", function(state)
     flying = state
     if flying then
         local player = game.Players.LocalPlayer
         if player.Character then
             local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
             if humanoidRootPart then
+                -- 禁用重力并重置速度
                 humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
                 humanoidRootPart.Gravity = 0
                 
+                -- 飞行控制连接
                 if flyConnection then flyConnection:Disconnect() end
                 flyConnection = game:GetService("RunService").Heartbeat:Connect(function()
                     if flying and humanoidRootPart then
                         local cam = workspace.CurrentCamera
                         local moveDir = Vector3.new()
                         
+                        -- WASD控制方向
                         if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
                             moveDir = moveDir + (cam.CFrame.LookVector * flySpeed)
                         end
@@ -301,6 +65,7 @@ local flyToggle = createToggle(GeneralPage, "飞行", UDim2.new(0.05, 0, 0.05, 0
                         if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
                             moveDir = moveDir + (cam.CFrame.RightVector * flySpeed)
                         end
+                        -- 空格上升，Shift下降
                         if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.Space) then
                             moveDir = moveDir + (Vector3.new(0, 1, 0) * flySpeed)
                         end
@@ -314,10 +79,12 @@ local flyToggle = createToggle(GeneralPage, "飞行", UDim2.new(0.05, 0, 0.05, 0
             end
         end
     else
+        -- 关闭飞行
         if flyConnection then
             flyConnection:Disconnect()
             flyConnection = nil
         end
+        -- 恢复重力
         local player = game.Players.LocalPlayer
         if player.Character then
             local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
@@ -329,51 +96,52 @@ local flyToggle = createToggle(GeneralPage, "飞行", UDim2.new(0.05, 0, 0.05, 0
     end
 end)
 
-local flySpeedSlider = createSlider(GeneralPage, "飞行速度", UDim2.new(0.05, 0, 0.15, 0), 1, 500, function(value)
-    flySpeed = value
-    flySpeedSlider.value.Text = tostring(value)
+-- 飞行速度调整
+GeneralSection:NewSlider("飞行速度", "调整飞行速度", 500, 1, function(speed)
+    flySpeed = speed
 end)
 
-local walkSpeed = 16
-local walkSpeedSlider = createSlider(GeneralPage, "移动速度", UDim2.new(0.05, 0, 0.3, 0), 16, 100, function(value)
-    walkSpeed = value
-    walkSpeedSlider.value.Text = tostring(value)
-    
+-- 自定义移速
+GeneralSection:NewSlider("移动速度", "调整移动速度", 100, 16, function(speed)
     local player = game.Players.LocalPlayer
     if player.Character then
         local humanoid = player.Character:FindFirstChild("Humanoid")
         if humanoid then
-            humanoid.WalkSpeed = walkSpeed
+            humanoid.WalkSpeed = speed
         end
     end
 end)
 
-createButton(GeneralPage, "甩飞所有人", UDim2.new(0.05, 0, 0.45, 0), nil, function()
+-- 甩飞所有人
+GeneralSection:NewButton("甩飞所有人", "甩飞所有玩家", function()
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player.Character then
             local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
             if humanoidRootPart then
+                -- 随机方向甩飞
                 humanoidRootPart.Velocity = Vector3.new(
-                    math.random(-100, 100),
-                    math.random(100, 200),
-                    math.random(-100, 100)
+                    math.random(-200, 200),
+                    math.random(150, 300),
+                    math.random(-200, 200)
                 )
             end
         end
     end
 end)
 
+-- 透视功能
 local espEnabled = false
 local espObjects = {}
 
-createToggle(GeneralPage, "透视", UDim2.new(0.55, 0, 0.05, 0), function(state)
+GeneralSection:NewToggle("透视", "启用/禁用透视", function(state)
     espEnabled = state
     if espEnabled then
+        -- 为所有玩家添加高亮
         for _, player in ipairs(game.Players:GetPlayers()) do
             if player ~= game.Players.LocalPlayer and player.Character then
                 local highlight = Instance.new("Highlight")
                 highlight.Parent = player.Character
-                highlight.FillColor = Color3.fromRGB(0, 255, 0)
+                highlight.FillColor = Color3.fromRGB(0, 255, 0) -- 绿色
                 highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                 
@@ -381,6 +149,7 @@ createToggle(GeneralPage, "透视", UDim2.new(0.55, 0, 0.05, 0), function(state)
             end
         end
     else
+        -- 移除所有高亮
         for _, obj in pairs(espObjects) do
             if obj then
                 obj:Remove()
@@ -390,10 +159,11 @@ createToggle(GeneralPage, "透视", UDim2.new(0.55, 0, 0.05, 0), function(state)
     end
 end)
 
+-- 自瞄功能
 local aimbotEnabled = false
 local aimbotConnection
 
-createToggle(GeneralPage, "自瞄", UDim2.new(0.55, 0, 0.15, 0), function(state)
+GeneralSection:NewToggle("自瞄", "启用/禁用自瞄", function(state)
     aimbotEnabled = state
     if aimbotEnabled then
         aimbotConnection = game:GetService("RunService").RenderStepped:Connect(function()
@@ -405,6 +175,7 @@ createToggle(GeneralPage, "自瞄", UDim2.new(0.55, 0, 0.15, 0), function(state)
             
             if not localRoot then return end
             
+            -- 寻找最近的玩家
             for _, player in ipairs(game.Players:GetPlayers()) do
                 if player ~= localPlayer and player.Character then
                     local targetRoot = player.Character:FindFirstChild("HumanoidRootPart")
@@ -418,6 +189,7 @@ createToggle(GeneralPage, "自瞄", UDim2.new(0.55, 0, 0.15, 0), function(state)
                 end
             end
             
+            -- 瞄准最近玩家
             if closestPlayer and closestPlayer.Character then
                 local targetRoot = closestPlayer.Character:FindFirstChild("HumanoidRootPart")
                 if targetRoot then
@@ -434,63 +206,58 @@ createToggle(GeneralPage, "自瞄", UDim2.new(0.55, 0, 0.15, 0), function(state)
     end
 end)
 
-createButton(GeneralPage, "摧毁服务器?!?", UDim2.new(0.55, 0, 0.45, 0), nil, function()
-    local lighting = game:GetService("Lighting")
-    local sky = lighting:FindFirstChildOfClass("Sky") or Instance.new("Sky")
-    sky.Parent = lighting
-    sky.SkyboxBk = "rbxassetid://1"
-    sky.SkyboxDn = "rbxassetid://1"
-    sky.SkyboxFt = "rbxassetid://1"
-    sky.SkyboxLf = "rbxassetid://1"
-    sky.SkyboxRt = "rbxassetid://1"
-    sky.SkyboxUp = "rbxassetid://1"
-    
+-- 摧毁服务器
+GeneralSection:NewButton("摧毁服务器?!?", "警告：此操作不可逆!", function()
+    -- 人物身上冒火效果
     local player = game.Players.LocalPlayer
     if player.Character then
         local fire = Instance.new("Fire")
-        fire.Size = 10
-        fire.Heat = 10
+        fire.Size = 15
+        fire.Heat = 25
         fire.Parent = player.Character.Head
         
         local fire2 = Instance.new("Fire")
-        fire2.Size = 15
-        fire2.Heat = 15
+        fire2.Size = 20
+        fire2.Heat = 30
         fire2.Parent = player.Character.HumanoidRootPart
     end
     
+    -- 屏幕上方显示文字
     local gui = Instance.new("ScreenGui")
-    local text = Instance.new("TextLabel")
     gui.Parent = game.Players.LocalPlayer.PlayerGui
-    text.Parent = gui
+    
+    local text = Instance.new("TextLabel")
     text.Size = UDim2.new(1, 0, 0.1, 0)
-    text.Position = UDim2.new(0, 0, 0, 0)
-    text.Text = "You..."
+    text.Position = UDim2.new(0, 0, 0.1, 0)
+    text.Text = "退吧，这服务器坏了"
     text.TextScaled = true
     text.TextColor3 = Color3.new(1, 0, 0)
     text.BackgroundTransparency = 1
-    text.Font = Enum.Font.GothamBold
-    
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj:IsA("Part") and obj:FindFirstChildWhichIsA("Decal") then
-            for _, decal in ipairs(obj:GetChildren()) do
-                if decal:IsA("Decal") then
-                    decal.Texture = "rbxassetid://2"
-                end
-            end
-        elseif obj:IsA("Texture") then
-            obj.Texture = "rbxassetid://2"
-        end
+    text.Font = Enum.Font.GothamBlack
+    text.TextStrokeTransparency = 0
+    text.TextStrokeColor3 = Color3.new(0, 0, 0)
+    text.Parent = gui
+end)
+
+-- ===== 被遗弃页面 =====
+local AbandonedTab = Window:NewTab("被遗弃")
+local AbandonedSection = AbandonedTab:NewSection("被遗弃功能")
+
+-- 访客1337自动防御
+AbandonedSection:NewToggle("访客1337自动防御", "启用/禁用自动防御", function(state)
+    -- 自动防御逻辑可以在这里实现
+    if state then
+        -- 启用自动防御
+    else
+        -- 禁用自动防御
     end
 end)
 
--- 添加被遗弃功能
-createToggle(AbandonedPage, "访客1337自动防御", UDim2.new(0.05, 0, 0.05, 0), function(state)
-end)
-
+-- 无限体力
 local infiniteStamina = false
 local staminaConnection
 
-createToggle(AbandonedPage, "无限体力", UDim2.new(0.05, 0, 0.15, 0), function(state)
+AbandonedSection:NewToggle("无限体力", "启用/禁用无限体力", function(state)
     infiniteStamina = state
     if infiniteStamina then
         staminaConnection = game:GetService("RunService").Heartbeat:Connect(function()
@@ -498,8 +265,8 @@ createToggle(AbandonedPage, "无限体力", UDim2.new(0.05, 0, 0.15, 0), functio
             if player.Character then
                 local humanoid = player.Character:FindFirstChild("Humanoid")
                 if humanoid then
+                    -- 保持奔跑状态
                     humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
-                    humanoid:ChangeState(Enum.HumanoidStateType.Running)
                 end
             end
         end)
@@ -509,16 +276,24 @@ createToggle(AbandonedPage, "无限体力", UDim2.new(0.05, 0, 0.15, 0), functio
     end
 end)
 
+-- 自动维修发电机
 local autoRepair = false
 local repairConnection
 
-createToggle(AbandonedPage, "自动维修发电机", UDim2.new(0.05, 0, 0.25, 0), function(state)
+AbandonedSection:NewToggle("自动维修发电机", "每三秒修一次", function(state)
     autoRepair = state
     if autoRepair then
         repairConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            -- 查找发电机
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj.Name:lower():find("generator") or obj.Name:lower():find("gen") then
-                    local args = {[1] = obj, [2] = "Repair"}
+                    -- 模拟维修动作
+                    local args = {
+                        [1] = obj,
+                        [2] = "Repair"
+                    }
+                    
+                    -- 尝试调用维修事件
                     local events = game:GetService("ReplicatedStorage"):GetChildren()
                     for _, event in ipairs(events) do
                         if event:IsA("RemoteEvent") then
@@ -526,7 +301,8 @@ createToggle(AbandonedPage, "自动维修发电机", UDim2.new(0.05, 0, 0.25, 0)
                             break
                         end
                     end
-                    wait(3)
+                    
+                    wait(3) -- 每三秒修一次
                 end
             end
         end)
@@ -536,7 +312,8 @@ createToggle(AbandonedPage, "自动维修发电机", UDim2.new(0.05, 0, 0.25, 0)
     end
 end)
 
-createButton(AbandonedPage, "传送到杀手那边", UDim2.new(0.05, 0, 0.4, 0), nil, function()
+-- 传送到杀手那边
+AbandonedSection:NewButton("传送到杀手那边", "传送到杀手位置", function()
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player ~= game.Players.LocalPlayer and player.Character then
             local killerRoot = player.Character:FindFirstChild("HumanoidRootPart")
@@ -546,6 +323,7 @@ createButton(AbandonedPage, "传送到杀手那边", UDim2.new(0.05, 0, 0.4, 0),
                     local localRoot = localChar:FindFirstChild("HumanoidRootPart")
                     if localRoot then
                         localRoot.CFrame = killerRoot.CFrame * CFrame.new(0, 0, 5)
+                        break
                     end
                 end
             end
@@ -553,12 +331,14 @@ createButton(AbandonedPage, "传送到杀手那边", UDim2.new(0.05, 0, 0.4, 0),
     end
 end)
 
+-- 透视所有幸存者+杀手
 local abandonedESP = false
 local abandonedESPObjects = {}
 
-createToggle(AbandonedPage, "透视所有玩家", UDim2.new(0.55, 0, 0.05, 0), function(state)
+AbandonedSection:NewToggle("透视所有玩家", "幸存者绿色,杀手红色", function(state)
     abandonedESP = state
     if not abandonedESP then
+        -- 清除所有高亮
         for _, obj in pairs(abandonedESPObjects) do
             if obj then
                 obj:Remove()
@@ -568,18 +348,154 @@ createToggle(AbandonedPage, "透视所有玩家", UDim2.new(0.55, 0, 0.05, 0), f
         return
     end
     
+    -- 为所有玩家添加高亮和名字显示
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player.Character then
+            -- 创建高亮效果
             local highlight = Instance.new("Highlight")
             highlight.Parent = player.Character
             highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
             
+            -- 创建名字显示
             local billboard = Instance.new("BillboardGui")
             billboard.Parent = player.Character.Head
             billboard.Size = UDim2.new(0, 100, 0, 50)
-            billboard.StudsOffset = Vector3.new(0, 2, 0)
+            billboard.StudsOffset = Vector3.new(0, 3, 0)
             billboard.AlwaysOnTop = true
             
             local text = Instance.new("TextLabel")
             text.Parent = billboard
-            text.Size = UDim2.new(1
+            text.Size = UDim2.new(1, 0, 1, 0)
+            text.Text = player.Name
+            text.TextScaled = true
+            text.BackgroundTransparency = 1
+            text.Font = Enum.Font.GothamBold
+            
+            -- 根据角色类型设置颜色
+            if player.Name:lower():find("killer") or player.Team and player.Team.Name:lower():find("killer") then
+                highlight.FillColor = Color3.new(1, 0, 0) -- 红色：杀手
+                text.TextColor3 = Color3.new(1, 0, 0)
+            else
+                highlight.FillColor = Color3.new(0, 1, 0) -- 绿色：幸存者
+                text.TextColor3 = Color3.new(0, 1, 0)
+            end
+            
+            table.insert(abandonedESPObjects, highlight)
+            table.insert(abandonedESPObjects, billboard)
+        end
+    end
+end)
+
+-- 传送到发电机
+AbandonedSection:NewButton("传送到发电机", "传送到发电机位置", function()
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name:lower():find("generator") or obj.Name:lower():find("gen") then
+            local localChar = game.Players.LocalPlayer.Character
+            if localChar then
+                local localRoot = localChar:FindFirstChild("HumanoidRootPart")
+                if localRoot then
+                    localRoot.CFrame = obj.CFrame * CFrame.new(0, 3, 0)
+                    break
+                end
+            end
+        end
+    end
+end)
+
+-- ===== 摧毁服务器页面（仅自己可见） =====
+local DestroyTab = Window:NewTab("摧毁脚本")
+local DestroySection = DestroyTab:NewSection("摧毁功能（仅自己可见）")
+
+-- 摧毁1按钮
+DestroySection:NewButton("摧毁1", "人物冒火,显示退出文字", function()
+    -- 人物身上冒火
+    local player = game.Players.LocalPlayer
+    if player.Character then
+        local fire = Instance.new("Fire")
+        fire.Size = 12
+        fire.Heat = 20
+        fire.Parent = player.Character.Head
+        
+        local fire2 = Instance.new("Fire")
+        fire2.Size = 18
+        fire2.Heat = 25
+        fire2.Parent = player.Character.HumanoidRootPart
+    end
+    
+    -- 屏幕上方显示"退出？？？"红色字
+    local gui = Instance.new("ScreenGui")
+    gui.Parent = game.Players.LocalPlayer.PlayerGui
+    
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(1, 0, 0.1, 0)
+    text.Position = UDim2.new(0, 0, 0.2, 0)
+    text.Text = "退出？？？"
+    text.TextScaled = true
+    text.TextColor3 = Color3.new(1, 0, 0)
+    text.BackgroundTransparency = 1
+    text.Font = Enum.Font.GothamBlack
+    text.TextStrokeTransparency = 0
+    text.TextStrokeColor3 = Color3.new(0, 0, 0)
+    text.Parent = gui
+end)
+
+-- 摧毁2按钮
+DestroySection:NewButton("摧毁2", "环境变黑,人物变黑,闪乱码,踢出", function()
+    -- 环境变成黑色
+    local lighting = game:GetService("Lighting")
+    lighting.Ambient = Color3.new(0, 0, 0)
+    lighting.OutdoorAmbient = Color3.new(0, 0, 0)
+    lighting.Brightness = 0
+    lighting.GlobalShadows = true
+    
+    -- 人物变成黑色
+    local player = game.Players.LocalPlayer
+    if player.Character then
+        for _, part in pairs(player.Character:GetChildren()) do
+            if part:IsA("Part") then
+                part.BrickColor = BrickColor.new("Really black")
+                part.Material = Enum.Material.Slate
+            end
+        end
+    end
+    
+    -- 屏幕上闪着乱码
+    local gui = Instance.new("ScreenGui")
+    gui.Parent = game.Players.LocalPlayer.PlayerGui
+    
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(1, 0, 1, 0)
+    text.Position = UDim2.new(0, 0, 0, 0)
+    text.Text = "68khdwhjjszmsabvjazvddsxxwzwzwjo"
+    text.TextScaled = true
+    text.TextColor3 = Color3.new(1, 0, 0)
+    text.BackgroundColor3 = Color3.new(0, 0, 0)
+    text.Font = Enum.Font.GothamBlack
+    text.Parent = gui
+    
+    -- 闪烁效果
+    local blinkConnection
+    blinkConnection = game:GetService("RunService").Heartbeat:Connect(function()
+        text.Visible = not text.Visible
+    end)
+    
+    -- 等待3秒后踢出玩家
+    wait(3)
+    if blinkConnection then
+        blinkConnection:Disconnect()
+    end
+    -- 踢出玩家并显示错误信息
+    player:Kick("错误代码267: ？你摧毁服务器干啥兄弟")
+end)
+
+-- 初始化脚本
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    -- 角色重生时重置状态
+    if flying and flyConnection then
+        flyConnection:Disconnect()
+        flying = false
+    end
+end)
+
+print("小风脚本加载成功！感谢使用！")
+
