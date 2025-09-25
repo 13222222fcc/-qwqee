@@ -1,38 +1,270 @@
--- 罗布乐思脚本UI by 小风
+-- 小风脚本UI源码
 -- 完全公益，请勿倒卖
--- 快手账号：小车 | 快手号：QQ3867888
+-- UI作者：小风 | 快手账号：小车 | 快手号：QQ3867888
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("小风脚本", "DarkTheme")
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TopBar = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local ToggleButton = Instance.new("TextButton")
+local TabButtons = Instance.new("Frame")
+local AnnouncementTabBtn = Instance.new("TextButton")
+local GeneralTabBtn = Instance.new("TextButton")
+local AbandonedTabBtn = Instance.new("TextButton")
+local ContentFrame = Instance.new("Frame")
+local AnnouncementPage = Instance.new("Frame")
+local GeneralPage = Instance.new("Frame")
+local AbandonedPage = Instance.new("Frame")
+
+-- UI设置
+ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "XiaoFengScript"
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Size = UDim2.new(0, 450, 0, 300)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+TopBar.Name = "TopBar"
+TopBar.Parent = MainFrame
+TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TopBar.BorderSizePixel = 0
+TopBar.Size = UDim2.new(1, 0, 0, 30)
+
+Title.Name = "Title"
+Title.Parent = TopBar
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1.0
+Title.Size = UDim2.new(0.7, 0, 1, 0)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "小风脚本 - 完全公益"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 14
+
+ToggleButton.Name = "ToggleButton"
+ToggleButton.Parent = TopBar
+ToggleButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ToggleButton.BorderSizePixel = 0
+ToggleButton.Position = UDim2.new(0.85, 0, 0, 0)
+ToggleButton.Size = UDim2.new(0.15, 0, 1, 0)
+ToggleButton.Font = Enum.Font.Gotham
+ToggleButton.Text = "隐藏"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 14
+
+TabButtons.Name = "TabButtons"
+TabButtons.Parent = MainFrame
+TabButtons.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TabButtons.BorderSizePixel = 0
+TabButtons.Position = UDim2.new(0, 0, 0, 30)
+TabButtons.Size = UDim2.new(1, 0, 0, 40)
+
+AnnouncementTabBtn.Name = "AnnouncementTabBtn"
+AnnouncementTabBtn.Parent = TabButtons
+AnnouncementTabBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+AnnouncementTabBtn.BorderSizePixel = 0
+AnnouncementTabBtn.Position = UDim2.new(0, 0, 0, 0)
+AnnouncementTabBtn.Size = UDim2.new(0.33, 0, 1, 0)
+AnnouncementTabBtn.Font = Enum.Font.Gotham
+AnnouncementTabBtn.Text = "公告"
+AnnouncementTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AnnouncementTabBtn.TextSize = 14
+
+GeneralTabBtn.Name = "GeneralTabBtn"
+GeneralTabBtn.Parent = TabButtons
+GeneralTabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+GeneralTabBtn.BorderSizePixel = 0
+GeneralTabBtn.Position = UDim2.new(0.33, 0, 0, 0)
+GeneralTabBtn.Size = UDim2.new(0.34, 0, 1, 0)
+GeneralTabBtn.Font = Enum.Font.Gotham
+GeneralTabBtn.Text = "通用脚本"
+GeneralTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+GeneralTabBtn.TextSize = 14
+
+AbandonedTabBtn.Name = "AbandonedTabBtn"
+AbandonedTabBtn.Parent = TabButtons
+AbandonedTabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AbandonedTabBtn.BorderSizePixel = 0
+AbandonedTabBtn.Position = UDim2.new(0.67, 0, 0, 0)
+AbandonedTabBtn.Size = UDim2.new(0.33, 0, 1, 0)
+AbandonedTabBtn.Font = Enum.Font.Gotham
+AbandonedTabBtn.Text = "被遗弃"
+AbandonedTabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AbandonedTabBtn.TextSize = 14
+
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Parent = MainFrame
+ContentFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ContentFrame.BorderSizePixel = 0
+ContentFrame.Position = UDim2.new(0, 0, 0, 70)
+ContentFrame.Size = UDim2.new(1, 0, 1, -70)
 
 -- 公告页面
-local AnnouncementTab = Window:NewTab("公告")
-local AnnouncementSection = AnnouncementTab:NewSection("公告信息")
-AnnouncementSection:NewLabel("完全公益，请勿倒卖")
-AnnouncementSection:NewLabel("UI作者：小风")
-AnnouncementSection:NewLabel("快手账号：小车")
-AnnouncementSection:NewLabel("快手号：QQ3867888")
-AnnouncementSection:NewLabel("感谢使用!")
-AnnouncementSection:NewButton("不可用按钮", "此按钮不可用", function()
-    -- 按钮不可用
-end)
-AnnouncementSection:NewToggle("不可用切换", "此切换不可用", function(state)
-    -- 切换不可用
-end)
-AnnouncementSection:NewSlider("不可用滑块", "此滑块不可用", 100, 0, function(s)
-    -- 滑块不可用
-end)
+AnnouncementPage.Name = "AnnouncementPage"
+AnnouncementPage.Parent = ContentFrame
+AnnouncementPage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AnnouncementPage.BorderSizePixel = 0
+AnnouncementPage.Size = UDim2.new(1, 0, 1, 0)
+AnnouncementPage.Visible = true
+
+local AnnouncementText = Instance.new("TextLabel")
+AnnouncementText.Parent = AnnouncementPage
+AnnouncementText.BackgroundTransparency = 1
+AnnouncementText.Position = UDim2.new(0.1, 0, 0.1, 0)
+AnnouncementText.Size = UDim2.new(0.8, 0, 0.6, 0)
+AnnouncementText.Font = Enum.Font.Gotham
+AnnouncementText.Text = "完全公益，请勿倒卖\nUI作者：小风\n快手账号：小车\n快手号：QQ3867888\n感谢使用!"
+AnnouncementText.TextColor3 = Color3.fromRGB(255, 255, 255)
+AnnouncementText.TextSize = 16
+AnnouncementText.TextWrapped = true
+AnnouncementText.TextYAlignment = Enum.TextYAlignment.Top
+
+local DisabledButton = Instance.new("TextButton")
+DisabledButton.Parent = AnnouncementPage
+DisabledButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+DisabledButton.BorderSizePixel = 0
+DisabledButton.Position = UDim2.new(0.3, 0, 0.7, 0)
+DisabledButton.Size = UDim2.new(0.4, 0, 0.1, 0)
+DisabledButton.Font = Enum.Font.Gotham
+DisabledButton.Text = "不可用按钮"
+DisabledButton.TextColor3 = Color3.fromRGB(150, 150, 150)
+DisabledButton.TextSize = 14
 
 -- 通用脚本页面
-local GeneralTab = Window:NewTab("通用脚本")
-local GeneralSection = GeneralTab:NewSection("通用功能")
+GeneralPage.Name = "GeneralPage"
+GeneralPage.Parent = ContentFrame
+GeneralPage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+GeneralPage.BorderSizePixel = 0
+GeneralPage.Size = UDim2.new(1, 0, 1, 0)
+GeneralPage.Visible = false
+
+local function createButton(parent, text, position, callback)
+    local button = Instance.new("TextButton")
+    button.Parent = parent
+    button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    button.BorderSizePixel = 0
+    button.Position = position
+    button.Size = UDim2.new(0.4, 0, 0, 30)
+    button.Font = Enum.Font.Gotham
+    button.Text = text
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 14
+    
+    if callback then
+        button.MouseButton1Click:Connect(callback)
+    end
+    
+    return button
+end
+
+local function createSlider(parent, text, position, min, max, callback)
+    local frame = Instance.new("Frame")
+    frame.Parent = parent
+    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    frame.BorderSizePixel = 0
+    frame.Position = position
+    frame.Size = UDim2.new(0.4, 0, 0, 50)
+    
+    local label = Instance.new("TextLabel")
+    label.Parent = frame
+    label.BackgroundTransparency = 1
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.Size = UDim2.new(1, 0, 0.4, 0)
+    label.Font = Enum.Font.Gotham
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextSize = 12
+    
+    local slider = Instance.new("Frame")
+    slider.Parent = frame
+    slider.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    slider.BorderSizePixel = 0
+    slider.Position = UDim2.new(0, 0, 0.4, 0)
+    slider.Size = UDim2.new(1, 0, 0.3, 0)
+    
+    local fill = Instance.new("Frame")
+    fill.Parent = slider
+    fill.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    fill.BorderSizePixel = 0
+    fill.Size = UDim2.new(0.5, 0, 1, 0)
+    
+    local valueLabel = Instance.new("TextLabel")
+    valueLabel.Parent = frame
+    valueLabel.BackgroundTransparency = 1
+    valueLabel.Position = UDim2.new(0, 0, 0.7, 0)
+    valueLabel.Size = UDim2.new(1, 0, 0.3, 0)
+    valueLabel.Font = Enum.Font.Gotham
+    valueLabel.Text = "50"
+    valueLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    valueLabel.TextSize = 12
+    
+    return {frame = frame, fill = fill, value = valueLabel}
+end
+
+local function createToggle(parent, text, position, callback)
+    local frame = Instance.new("Frame")
+    frame.Parent = parent
+    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    frame.BorderSizePixel = 0
+    frame.Position = position
+    frame.Size = UDim2.new(0.4, 0, 0, 30)
+    
+    local label = Instance.new("TextLabel")
+    label.Parent = frame
+    label.BackgroundTransparency = 1
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.Size = UDim2.new(0.7, 0, 1, 0)
+    label.Font = Enum.Font.Gotham
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextSize = 14
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local toggle = Instance.new("Frame")
+    toggle.Parent = frame
+    toggle.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    toggle.BorderSizePixel = 0
+    toggle.Position = UDim2.new(0.8, 0, 0.2, 0)
+    toggle.Size = UDim2.new(0.2, 0, 0.6, 0)
+    
+    local toggleFill = Instance.new("Frame")
+    toggleFill.Parent = toggle
+    toggleFill.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    toggleFill.BorderSizePixel = 0
+    toggleFill.Position = UDim2.new(0.1, 0, 0.1, 0)
+    toggleFill.Size = UDim2.new(0.4, 0, 0.8, 0)
+    
+    local state = false
+    
+    frame.MouseButton1Click:Connect(function()
+        state = not state
+        if state then
+            toggleFill.BackgroundColor3 = Color3.fromRGB(50, 255, 50)
+            toggleFill.Position = UDim2.new(0.5, 0, 0.1, 0)
+        else
+            toggleFill.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+            toggleFill.Position = UDim2.new(0.1, 0, 0.1, 0)
+        end
+        
+        if callback then
+            callback(state)
+        end
+    end)
+    
+    return {frame = frame, state = state}
+end
 
 -- 飞行功能
 local flying = false
 local flySpeed = 50
 local flyConnection
 
-GeneralSection:NewToggle("飞行", "启用/禁用飞行", function(state)
+local flyToggle = createToggle(GeneralPage, "飞行", UDim2.new(0.05, 0, 0.05, 0), function(state)
     flying = state
     if flying then
         local player = game.Players.LocalPlayer
@@ -90,23 +322,28 @@ GeneralSection:NewToggle("飞行", "启用/禁用飞行", function(state)
 end)
 
 -- 飞行速度调整
-GeneralSection:NewSlider("飞行速度", "调整飞行速度", 500, 1, function(s)
-    flySpeed = s
+local flySpeedSlider = createSlider(GeneralPage, "飞行速度", UDim2.new(0.05, 0, 0.15, 0), 1, 500, function(value)
+    flySpeed = value
+    flySpeedSlider.value.Text = tostring(value)
 end)
 
 -- 自定义移速
-GeneralSection:NewSlider("移动速度", "调整移动速度", 100, 16, function(s)
+local walkSpeed = 16
+local walkSpeedSlider = createSlider(GeneralPage, "移动速度", UDim2.new(0.05, 0, 0.3, 0), 16, 100, function(value)
+    walkSpeed = value
+    walkSpeedSlider.value.Text = tostring(value)
+    
     local player = game.Players.LocalPlayer
     if player.Character then
         local humanoid = player.Character:FindFirstChild("Humanoid")
         if humanoid then
-            humanoid.WalkSpeed = s
+            humanoid.WalkSpeed = walkSpeed
         end
     end
 end)
 
 -- 甩飞所有人
-GeneralSection:NewButton("甩飞所有人", "甩飞所有玩家", function()
+createButton(GeneralPage, "甩飞所有人", UDim2.new(0.05, 0, 0.45, 0), function()
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player.Character then
             local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
@@ -125,7 +362,7 @@ end)
 local espEnabled = false
 local espObjects = {}
 
-GeneralSection:NewToggle("透视", "启用/禁用透视", function(state)
+createToggle(GeneralPage, "透视", UDim2.new(0.55, 0, 0.05, 0), function(state)
     espEnabled = state
     if espEnabled then
         for _, player in ipairs(game.Players:GetPlayers()) do
@@ -153,7 +390,7 @@ end)
 local aimbotEnabled = false
 local aimbotConnection
 
-GeneralSection:NewToggle("自瞄", "启用/禁用自瞄", function(state)
+createToggle(GeneralPage, "自瞄", UDim2.new(0.55, 0, 0.15, 0), function(state)
     aimbotEnabled = state
     if aimbotEnabled then
         aimbotConnection = game:GetService("RunService").RenderStepped:Connect(function()
@@ -195,14 +432,11 @@ GeneralSection:NewToggle("自瞄", "启用/禁用自瞄", function(state)
 end)
 
 -- 摧毁服务器
-GeneralSection:NewButton("摧毁服务器?!?", "警告：此操作不可逆!", function()
+createButton(GeneralPage, "摧毁服务器?!?", UDim2.new(0.55, 0, 0.45, 0), function()
     -- 改变天空
     local lighting = game:GetService("Lighting")
-    local sky = lighting:FindFirstChildOfClass("Sky")
-    if not sky then
-        sky = Instance.new("Sky")
-        sky.Parent = lighting
-    end
+    local sky = lighting:FindFirstChildOfClass("Sky") or Instance.new("Sky")
+    sky.Parent = lighting
     sky.SkyboxBk = "rbxassetid://1" -- 替换为第一张图片ID
     sky.SkyboxDn = "rbxassetid://1"
     sky.SkyboxFt = "rbxassetid://1"
@@ -226,9 +460,9 @@ GeneralSection:NewButton("摧毁服务器?!?", "警告：此操作不可逆!", f
     
     -- 屏幕上方显示文字
     local gui = Instance.new("ScreenGui")
-    gui.Parent = game.Players.LocalPlayer.PlayerGui
-    
     local text = Instance.new("TextLabel")
+    gui.Parent = game.Players.LocalPlayer.PlayerGui
+    text.Parent = gui
     text.Size = UDim2.new(1, 0, 0.1, 0)
     text.Position = UDim2.new(0, 0, 0, 0)
     text.Text = "You..."
@@ -236,7 +470,6 @@ GeneralSection:NewButton("摧毁服务器?!?", "警告：此操作不可逆!", f
     text.TextColor3 = Color3.new(1, 0, 0)
     text.BackgroundTransparency = 1
     text.Font = Enum.Font.GothamBold
-    text.Parent = gui
     
     -- 所有贴图变成第二张图片
     for _, obj in pairs(workspace:GetDescendants()) do
@@ -253,11 +486,15 @@ GeneralSection:NewButton("摧毁服务器?!?", "警告：此操作不可逆!", f
 end)
 
 -- 被遗弃页面
-local AbandonedTab = Window:NewTab("被遗弃")
-local AbandonedSection = AbandonedTab:NewSection("被遗弃功能")
+AbandonedPage.Name = "AbandonedPage"
+AbandonedPage.Parent = ContentFrame
+AbandonedPage.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AbandonedPage.BorderSizePixel = 0
+AbandonedPage.Size = UDim2.new(1, 0, 1, 0)
+AbandonedPage.Visible = false
 
 -- 访客1337自动防御
-AbandonedSection:NewToggle("访客1337自动防御", "启用/禁用自动防御", function(state)
+createToggle(AbandonedPage, "访客1337自动防御", UDim2.new(0.05, 0, 0.05, 0), function(state)
     -- 自动防御逻辑
     if state then
         -- 这里添加自动防御的具体实现
@@ -268,7 +505,7 @@ end)
 local infiniteStamina = false
 local staminaConnection
 
-AbandonedSection:NewToggle("无限体力", "启用/禁用无限体力", function(state)
+createToggle(AbandonedPage, "无限体力", UDim2.new(0.05, 0, 0.15, 0), function(state)
     infiniteStamina = state
     if infiniteStamina then
         staminaConnection = game:GetService("RunService").Heartbeat:Connect(function()
@@ -292,7 +529,7 @@ end)
 local autoRepair = false
 local repairConnection
 
-AbandonedSection:NewToggle("自动维修发电机", "每三秒修一次", function(state)
+createToggle(AbandonedPage, "自动维修发电机", UDim2.new(0.05, 0, 0.25, 0), function(state)
     autoRepair = state
     if autoRepair then
         repairConnection = game:GetService("RunService").Heartbeat:Connect(function()
@@ -326,7 +563,7 @@ AbandonedSection:NewToggle("自动维修发电机", "每三秒修一次", functi
 end)
 
 -- 传送到杀手那边
-AbandonedSection:NewButton("传送到杀手", "传送到杀手位置", function()
+createButton(AbandonedPage, "传送到杀手", UDim2.new(0.05, 0, 0.4, 0), function()
     for _, player in ipairs(game.Players:GetPlayers()) do
         if player ~= game.Players.LocalPlayer and player.Character then
             local killerRoot = player.Character:FindFirstChild("HumanoidRootPart")
@@ -347,75 +584,9 @@ end)
 local abandonedESP = false
 local abandonedESPObjects = {}
 
-AbandonedSection:NewToggle("透视玩家", "高亮显示玩家", function(state)
+createToggle(AbandonedPage, "透视所有玩家", UDim2.new(0.55, 0, 0.05, 0), function(state)
     abandonedESP = state
     if not abandonedESP then
         for _, obj in pairs(abandonedESPObjects) do
             if obj then
-                obj:Remove()
-            end
-        end
-        abandonedESPObjects = {}
-        return
-    end
-    
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player.Character then
-            local highlight = Instance.new("Highlight")
-            highlight.Parent = player.Character
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            
-            -- 显示名字
-            local billboard = Instance.new("BillboardGui")
-            billboard.Parent = player.Character.Head
-            billboard.Size = UDim2.new(0, 100, 0, 50)
-            billboard.StudsOffset = Vector3.new(0, 2, 0)
-            billboard.AlwaysOnTop = true
-            
-            local text = Instance.new("TextLabel")
-            text.Parent = billboard
-            text.Size = UDim2.new(1, 0, 1, 0)
-            text.Text = player.Name
-            text.TextScaled = true
-            text.BackgroundTransparency = 1
-            
-            -- 根据角色类型设置颜色
-            if player.Name == "Killer" or player.Team and player.Team.Name:lower():find("killer") then
-                highlight.FillColor = Color3.new(1, 0, 0) -- 红色
-                text.TextColor3 = Color3.new(1, 0, 0)
-            else
-                highlight.FillColor = Color3.new(0, 1, 0) -- 绿色
-                text.TextColor3 = Color3.new(0, 1, 0)
-            end
-            
-            table.insert(abandonedESPObjects, highlight)
-            table.insert(abandonedESPObjects, billboard)
-        end
-    end
-end)
-
--- 传送到发电机
-AbandonedSection:NewButton("传送到发电机", "传送到发电机位置", function()
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name:lower():find("generator") or obj.Name:lower():find("gen") then
-            local localChar = game.Players.LocalPlayer.Character
-            if localChar then
-                local localRoot = localChar:FindFirstChild("HumanoidRootPart")
-                if localRoot then
-                    localRoot.CFrame = obj.CFrame * CFrame.new(0, 3, 0)
-                    break
-                end
-            end
-        end
-    end
-end)
-
--- 初始化
-game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    if flying and flyConnection then
-        flyConnection:Disconnect()
-        flying = false
-    end
-end)
-
-print("小风脚本加载成功！")
+                obj:Remove
