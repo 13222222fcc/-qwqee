@@ -1,596 +1,421 @@
--- =============================================
--- 终极游戏辅助UI系统
--- 通用功能与被遗弃功能完整整合
--- 适用于忍者注入器
--- =============================================
+-- 罗布乐思脚本UI by 小风
+-- 完全公益，请勿倒卖
+-- 快手账号：小车 | 快手号：QQ3867888
 
-local Players = game:GetService("Players")
-local Lighting = game:GetService("Lighting")
-local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("小风脚本", "DarkTheme")
 
--- 加载Rayfield UI库
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- 公告页面
+local AnnouncementTab = Window:NewTab("公告")
+local AnnouncementSection = AnnouncementTab:NewSection("公告信息")
+AnnouncementSection:NewLabel("完全公益，请勿倒卖")
+AnnouncementSection:NewLabel("UI作者：小风")
+AnnouncementSection:NewLabel("快手账号：小车")
+AnnouncementSection:NewLabel("快手号：QQ3867888")
+AnnouncementSection:NewLabel("感谢使用!")
+AnnouncementSection:NewButton("不可用按钮", "此按钮不可用", function()
+    -- 按钮不可用
+end)
+AnnouncementSection:NewToggle("不可用切换", "此切换不可用", function(state)
+    -- 切换不可用
+end)
+AnnouncementSection:NewSlider("不可用滑块", "此滑块不可用", 100, 0, function(s)
+    -- 滑块不可用
+end)
 
--- 状态变量
-local DestroyServerActive = false
-local OriginalTextures = {}
-local OriginalSkybox = {}
+-- 通用脚本页面
+local GeneralTab = Window:NewTab("通用脚本")
+local GeneralSection = GeneralTab:NewSection("通用功能")
 
--- 创建主窗口
-local Window = Rayfield:CreateWindow({
-    Name = "🔥 终极游戏辅助系统",
-    LoadingTitle = "系统初始化中...",
-    LoadingSubtitle = "通用功能与被遗弃功能已加载",
-    ConfigurationSaving = {Enabled = true, FolderName = "UltimateUI", FileName = "Config"},
-    KeySystem = false,
-})
+-- 飞行功能
+local flying = false
+local flySpeed = 50
+local flyConnection
 
--- ==================== 通用功能页面 ====================
-local GeneralTab = Window:CreateTab("通用功能", 4483362458)
-
--- 飞行系统
-GeneralTab:CreateSection("✈️ 飞行系统")
-local Flying = false
-local FlightSpeed = 50
-
-local FlightToggle = GeneralTab:CreateToggle({
-    Name = "启用飞行模式",
-    CurrentValue = false,
-    Flag = "FlightToggle",
-    Callback = function(Value)
-        Flying = Value
-        local player = Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-        
-        if Flying and humanoidRootPart then
-            humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
-            humanoidRootPart.Gravity = 0
-            
-            -- 飞行控制循环
-            spawn(function()
-                while Flying do
-                    humanoidRootPart.Velocity = humanoidRootPart.CFrame.LookVector * FlightSpeed
-                    task.wait()
-                end
-            end)
-            
-            Rayfield:Notify({
-                Title = "飞行系统",
-                Content = "飞行模式已激活",
-                Duration = 3,
-            })
-        elseif humanoidRootPart then
-            humanoidRootPart.Gravity = 196.2
-            Rayfield:Notify({
-                Title = "飞行系统",
-                Content = "飞行模式已关闭",
-                Duration = 3,
-            })
-        end
-    end
-})
-
-local FlightSpeedSlider = GeneralTab:CreateSlider({
-    Name = "飞行速度调整",
-    Range = {10, 200},
-    Increment = 5,
-    Suffix = "速度",
-    CurrentValue = 50,
-    Flag = "FlightSpeed",
-    Callback = function(Value)
-        FlightSpeed = Value
-    end
-})
-
--- 移动速度调整
-GeneralTab:CreateSection("🏃 移动设置")
-local SpeedSlider = GeneralTab:CreateSlider({
-    Name = "移动速度",
-    Range = {16, 100},
-    Increment = 1,
-    Suffix = "速度",
-    CurrentValue = 50,
-    Flag = "SpeedSlider",
-    Callback = function(Value)
-        local player = Players.LocalPlayer
-        if player.Character and player.Character:FindFirstChild("Humanoid") then
-            player.Character.Humanoid.WalkSpeed = Value
-        end
-    end
-})
-
-local JumpSlider = GeneralTab:CreateSlider({
-    Name = "跳跃高度",
-    Range = {50, 200},
-    Increment = 1,
-    Suffix = "高度",
-    CurrentValue = 100,
-    Flag = "JumpSlider",
-    Callback = function(Value)
-        local player = Players.LocalPlayer
-        if player.Character and player.Character:FindFirstChild("Humanoid") then
-            player.Character.Humanoid.JumpPower = Value
-        end
-    end
-})
-
--- 透视功能
-GeneralTab:CreateSection("👁️ 视觉增强")
-local ESPToggle = GeneralTab:CreateToggle({
-    Name = "透视玩家",
-    CurrentValue = false,
-    Flag = "ESPToggle",
-    Callback = function(Value)
-        if Value then
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= Players.LocalPlayer and player.Character then
-                    local highlight = Instance.new("Highlight")
-                    highlight.Parent = player.Character
-                    highlight.FillColor = Color3.fromRGB(0, 255, 0)
-                    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                    highlight.Name = "ESPHighlight"
-                end
-            end
-            Rayfield:Notify({
-                Title = "视觉系统",
-                Content = "玩家透视已激活",
-                Duration = 3,
-            })
-        else
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player.Character then
-                    local highlight = player.Character:FindFirstChild("ESPHighlight")
-                    if highlight then
-                        highlight:Destroy()
-                    end
-                end
-            end
-            Rayfield:Notify({
-                Title = "视觉系统",
-                Content = "玩家透视已关闭",
-                Duration = 3,
-            })
-        end
-    end
-})
-
--- 自瞄功能
-GeneralTab:CreateSection("🎯 瞄准系统")
-local AimbotToggle = GeneralTab:CreateToggle({
-    Name = "自瞄辅助",
-    CurrentValue = false,
-    Flag = "AimbotToggle",
-    Callback = function(Value)
-        if Value then
-            Rayfield:Notify({
-                Title = "瞄准系统",
-                Content = "自瞄功能已激活",
-                Duration = 3,
-            })
-            
-            -- 自瞄逻辑
-            spawn(function()
-                while AimbotToggle.CurrentValue do
-                    local player = Players.LocalPlayer
-                    local character = player.Character
-                    if character then
-                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                        if humanoidRootPart then
-                            -- 寻找最近目标
-                            local closestTarget = nil
-                            local closestDistance = math.huge
-                            
-                            for _, target in ipairs(Players:GetPlayers()) do
-                                if target ~= player and target.Character then
-                                    local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-                                    if targetRoot then
-                                        local distance = (humanoidRootPart.Position - targetRoot.Position).Magnitude
-                                        if distance < closestDistance then
-                                            closestDistance = distance
-                                            closestTarget = targetRoot
-                                        end
-                                    end
-                                end
-                            end
-                            
-                            -- 瞄准目标
-                            if closestTarget then
-                                humanoidRootPart.CFrame = CFrame.new(
-                                    humanoidRootPart.Position,
-                                    closestTarget.Position
-                                )
-                            end
+GeneralSection:NewToggle("飞行", "启用/禁用飞行", function(state)
+    flying = state
+    if flying then
+        local player = game.Players.LocalPlayer
+        if player.Character then
+            local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                humanoidRootPart.Gravity = 0
+                
+                -- 飞行控制
+                if flyConnection then flyConnection:Disconnect() end
+                flyConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                    if flying and humanoidRootPart then
+                        local cam = workspace.CurrentCamera
+                        local moveDir = Vector3.new()
+                        
+                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
+                            moveDir = moveDir + (cam.CFrame.LookVector * flySpeed)
                         end
+                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
+                            moveDir = moveDir - (cam.CFrame.LookVector * flySpeed)
+                        end
+                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
+                            moveDir = moveDir - (cam.CFrame.RightVector * flySpeed)
+                        end
+                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
+                            moveDir = moveDir + (cam.CFrame.RightVector * flySpeed)
+                        end
+                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.Space) then
+                            moveDir = moveDir + (Vector3.new(0, 1, 0) * flySpeed)
+                        end
+                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.LeftShift) then
+                            moveDir = moveDir - (Vector3.new(0, 1, 0) * flySpeed)
+                        end
+                        
+                        humanoidRootPart.Velocity = moveDir
                     end
-                    task.wait()
-                end
-            end)
-        else
-            Rayfield:Notify({
-                Title = "瞄准系统",
-                Content = "自瞄功能已关闭",
-                Duration = 3,
-            })
+                end)
+            end
+        end
+    else
+        if flyConnection then
+            flyConnection:Disconnect()
+            flyConnection = nil
+        end
+        local player = game.Players.LocalPlayer
+        if player.Character then
+            local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                humanoidRootPart.Gravity = 1
+                humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+            end
         end
     end
-})
+end)
+
+-- 飞行速度调整
+GeneralSection:NewSlider("飞行速度", "调整飞行速度", 500, 1, function(s)
+    flySpeed = s
+end)
+
+-- 自定义移速
+GeneralSection:NewSlider("移动速度", "调整移动速度", 100, 16, function(s)
+    local player = game.Players.LocalPlayer
+    if player.Character then
+        local humanoid = player.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = s
+        end
+    end
+end)
 
 -- 甩飞所有人
-GeneralTab:CreateSection("🌀 互动功能")
-GeneralTab:CreateButton({
-    Name = "甩飞所有人",
-    Callback = function()
-        for _, player in ipairs(Players:GetPlayers()) do
-            if player.Character then
-                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-                if humanoidRootPart then
-                    humanoidRootPart.Velocity = Vector3.new(
-                        math.random(-50, 50),
-                        math.random(100, 200),
-                        math.random(-50, 50)
+GeneralSection:NewButton("甩飞所有人", "甩飞所有玩家", function()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Character then
+            local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                humanoidRootPart.Velocity = Vector3.new(
+                    math.random(-100, 100),
+                    math.random(100, 200),
+                    math.random(-100, 100)
+                )
+            end
+        end
+    end
+end)
+
+-- 透视
+local espEnabled = false
+local espObjects = {}
+
+GeneralSection:NewToggle("透视", "启用/禁用透视", function(state)
+    espEnabled = state
+    if espEnabled then
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                local highlight = Instance.new("Highlight")
+                highlight.Parent = player.Character
+                highlight.FillColor = Color3.fromRGB(0, 255, 0)
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                
+                table.insert(espObjects, highlight)
+            end
+        end
+    else
+        for _, obj in pairs(espObjects) do
+            if obj then
+                obj:Remove()
+            end
+        end
+        espObjects = {}
+    end
+end)
+
+-- 自瞄
+local aimbotEnabled = false
+local aimbotConnection
+
+GeneralSection:NewToggle("自瞄", "启用/禁用自瞄", function(state)
+    aimbotEnabled = state
+    if aimbotEnabled then
+        aimbotConnection = game:GetService("RunService").RenderStepped:Connect(function()
+            local closestPlayer = nil
+            local closestDistance = math.huge
+            local localPlayer = game.Players.LocalPlayer
+            local localChar = localPlayer.Character
+            local localRoot = localChar and localChar:FindFirstChild("HumanoidRootPart")
+            
+            if not localRoot then return end
+            
+            for _, player in ipairs(game.Players:GetPlayers()) do
+                if player ~= localPlayer and player.Character then
+                    local targetRoot = player.Character:FindFirstChild("HumanoidRootPart")
+                    if targetRoot then
+                        local distance = (targetRoot.Position - localRoot.Position).Magnitude
+                        if distance < closestDistance then
+                            closestDistance = distance
+                            closestPlayer = player
+                        end
+                    end
+                end
+            end
+            
+            if closestPlayer and closestPlayer.Character then
+                local targetRoot = closestPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if targetRoot then
+                    workspace.CurrentCamera.CFrame = CFrame.new(
+                        workspace.CurrentCamera.CFrame.Position,
+                        targetRoot.Position
                     )
                 end
             end
-        end
-        Rayfield:Notify({
-            Title = "互动系统",
-            Content = "已甩飞所有玩家!",
-            Duration = 3,
-        })
+        end)
+    elseif aimbotConnection then
+        aimbotConnection:Disconnect()
+        aimbotConnection = nil
     end
-})
+end)
 
--- 摧毁服务器（视觉特效）
-GeneralTab:CreateSection("💥 高级功能")
-GeneralTab:CreateButton({
-    Name = "摧毁服务器视觉效果",
-    Callback = function()
-        DestroyServerActive = not DestroyServerActive
+-- 摧毁服务器
+GeneralSection:NewButton("摧毁服务器?!?", "警告：此操作不可逆!", function()
+    -- 改变天空
+    local lighting = game:GetService("Lighting")
+    local sky = lighting:FindFirstChildOfClass("Sky")
+    if not sky then
+        sky = Instance.new("Sky")
+        sky.Parent = lighting
+    end
+    sky.SkyboxBk = "rbxassetid://1" -- 替换为第一张图片ID
+    sky.SkyboxDn = "rbxassetid://1"
+    sky.SkyboxFt = "rbxassetid://1"
+    sky.SkyboxLf = "rbxassetid://1"
+    sky.SkyboxRt = "rbxassetid://1"
+    sky.SkyboxUp = "rbxassetid://1"
+    
+    -- 人物身上冒火
+    local player = game.Players.LocalPlayer
+    if player.Character then
+        local fire = Instance.new("Fire")
+        fire.Size = 10
+        fire.Heat = 10
+        fire.Parent = player.Character.Head
         
-        if DestroyServerActive then
-            -- 保存原始状态
-            local sky = Lighting:FindFirstChildOfClass("Sky")
-            if sky then
-                OriginalSkybox = {
-                    SkyboxBk = sky.SkyboxBk,
-                    SkyboxDn = sky.SkyboxDn,
-                    SkyboxFt = sky.SkyboxFt,
-                    SkyboxLf = sky.SkyboxLf,
-                    SkyboxRt = sky.SkyboxRt,
-                    SkyboxUp = sky.SkyboxUp
-                }
-            end
-            
-            -- 替换天空盒
-            if sky then
-                sky.SkyboxBk = "rbxassetid://skybox_back"  -- 替换为实际图片ID
-                sky.SkyboxDn = "rbxassetid://skybox_down"
-                sky.SkyboxFt = "rbxassetid://skybox_front"
-                sky.SkyboxLf = "rbxassetid://skybox_left"
-                sky.SkyboxRt = "rbxassetid://skybox_right"
-                sky.SkyboxUp = "rbxassetid://skybox_up"
-            end
-            
-            -- 替换所有贴图
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if obj:IsA("Part") and obj.TextureID ~= "" then
-                    OriginalTextures[obj] = obj.TextureID
-                    obj.TextureID = "rbxassetid://red_texture"  -- 替换为红色皮肤ID
+        local fire2 = Instance.new("Fire")
+        fire2.Size = 15
+        fire2.Heat = 15
+        fire2.Parent = player.Character.HumanoidRootPart
+    end
+    
+    -- 屏幕上方显示文字
+    local gui = Instance.new("ScreenGui")
+    gui.Parent = game.Players.LocalPlayer.PlayerGui
+    
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(1, 0, 0.1, 0)
+    text.Position = UDim2.new(0, 0, 0, 0)
+    text.Text = "You..."
+    text.TextScaled = true
+    text.TextColor3 = Color3.new(1, 0, 0)
+    text.BackgroundTransparency = 1
+    text.Font = Enum.Font.GothamBold
+    text.Parent = gui
+    
+    -- 所有贴图变成第二张图片
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("Part") and obj:FindFirstChildWhichIsA("Decal") then
+            for _, decal in ipairs(obj:GetChildren()) do
+                if decal:IsA("Decal") then
+                    decal.Texture = "rbxassetid://2" -- 替换为第二张图片ID
                 end
             end
-            
-            -- 玩家皮肤变为红色酷小孩
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player.Character then
-                    -- 添加火焰效果
-                    local fire = Instance.new("Fire")
-                    fire.Parent = player.Character:FindFirstChild("HumanoidRootPart")
-                    fire.Size = 5
-                    fire.Heat = 10
-                    fire.Color = Color3.fromRGB(255, 0, 0)
-                    fire.SecondaryColor = Color3.fromRGB(255, 100, 0)
-                end
-            end
-            
-            -- 创建屏幕文字
-            local screenGui = Instance.new("ScreenGui")
-            screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-            screenGui.Name = "DestroyServerGui"
-            
-            local textLabel = Instance.new("TextLabel")
-            textLabel.Parent = screenGui
-            textLabel.Size = UDim2.new(1, 0, 0.1, 0)
-            textLabel.Position = UDim2.new(0, 0, 0, 0)
-            textLabel.Text = "从脚本摧毁服务器"
-            textLabel.TextScaled = true
-            textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-            textLabel.BackgroundTransparency = 1
-            textLabel.Font = Enum.Font.SciFi
-            
-            Rayfield:Notify({
-                Title = "服务器控制",
-                Content = "服务器视觉效果已修改 (仅自己可见)",
-                Duration = 5,
-            })
-        else
-            -- 恢复原始状态
-            local sky = Lighting:FindFirstChildOfClass("Sky")
-            if sky and OriginalSkybox then
-                sky.SkyboxBk = OriginalSkybox.SkyboxBk
-                sky.SkyboxDn = OriginalSkybox.SkyboxDn
-                sky.SkyboxFt = OriginalSkybox.SkyboxFt
-                sky.SkyboxLf = OriginalSkybox.SkyboxLf
-                sky.SkyboxRt = OriginalSkybox.SkyboxRt
-                sky.SkyboxUp = OriginalSkybox.SkyboxUp
-            end
-            
-            -- 恢复原始贴图
-            for obj, textureId in pairs(OriginalTextures) do
-                if obj.Parent then
-                    obj.TextureID = textureId
-                end
-            end
-            OriginalTextures = {}
-            
-            -- 移除火焰效果
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player.Character then
-                    local fire = player.Character:FindFirstChild("Fire")
-                    if fire then
-                        fire:Destroy()
-                    end
-                end
-            end
-            
-            -- 移除屏幕文字
-            local playerGui = Players.LocalPlayer:FindFirstChild("PlayerGui")
-            if playerGui then
-                local destroyGui = playerGui:FindFirstChild("DestroyServerGui")
-                if destroyGui then
-                    destroyGui:Destroy()
-                end
-            end
-            
-            Rayfield:Notify({
-                Title = "服务器控制",
-                Content = "服务器视觉效果已恢复",
-                Duration = 3,
-            })
+        elseif obj:IsA("Texture") then
+            obj.Texture = "rbxassetid://2" -- 替换为第二张图片ID
         end
     end
-})
+end)
 
--- ==================== 被遗弃功能页面 ====================
-local AbandonedTab = Window:CreateTab("被遗弃功能", 1234567890)
+-- 被遗弃页面
+local AbandonedTab = Window:NewTab("被遗弃")
+local AbandonedSection = AbandonedTab:NewSection("被遗弃功能")
 
--- 无限体力（仅修改体力，不修改生命值）
-AbandonedTab:CreateSection("⚡ 无限体力系统")
-local InfiniteStamina = false
-local StaminaToggle = AbandonedTab:CreateToggle({
-    Name = "无限体力模式",
-    CurrentValue = false,
-    Flag = "InfiniteStamina",
-    Callback = function(Value)
-        InfiniteStamina = Value
-        if InfiniteStamina then
-            local player = Players.LocalPlayer
-            local character = player.Character or player.CharacterAdded:Wait()
-            
-            spawn(function()
-                while StaminaToggle.CurrentValue and character do
-                    if character:FindFirstChild("Humanoid") then
-                        -- 仅修改体力值，不修改生命值
-                        character.Humanoid:SetAttribute("Stamina", 100)
-                    end
-                    task.wait(0.2)
-                end
-            end)
-            
-            Rayfield:Notify({
-                Title = "体力系统",
-                Content = "无限体力已激活",
-                Duration = 3,
-            })
-        else
-            Rayfield:Notify({
-                Title = "体力系统",
-                Content = "无限体力已关闭",
-                Duration = 3,
-            })
-        end
+-- 访客1337自动防御
+AbandonedSection:NewToggle("访客1337自动防御", "启用/禁用自动防御", function(state)
+    -- 自动防御逻辑
+    if state then
+        -- 这里添加自动防御的具体实现
     end
-})
+end)
 
--- 幸存者杀手透视
-AbandonedTab:CreateSection("👁️ 高级透视系统")
-local KillerVisionToggle = AbandonedTab:CreateToggle({
-    Name = "透视杀手（红色高亮）",
-    CurrentValue = false,
-    Flag = "KillerVision",
-    Callback = function(Value)
-        if Value then
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= Players.LocalPlayer and player.Character then
-                    local highlight = Instance.new("Highlight")
-                    highlight.Parent = player.Character
-                    highlight.FillColor = Color3.fromRGB(255, 0, 0)
-                    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                    highlight.Name = "KillerHighlight"
+-- 无限体力
+local infiniteStamina = false
+local staminaConnection
+
+AbandonedSection:NewToggle("无限体力", "启用/禁用无限体力", function(state)
+    infiniteStamina = state
+    if infiniteStamina then
+        staminaConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            local player = game.Players.LocalPlayer
+            if player.Character then
+                local humanoid = player.Character:FindFirstChild("Humanoid")
+                if humanoid then
+                    -- 重置体力消耗
+                    humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
+                    humanoid:ChangeState(Enum.HumanoidStateType.Running)
                 end
             end
-            Rayfield:Notify({
-                Title = "透视系统",
-                Content = "杀手透视已激活",
-                Duration = 3,
-            })
-        else
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player.Character then
-                    local highlight = player.Character:FindFirstChild("KillerHighlight")
-                    if highlight then
-                        highlight:Destroy()
-                    end
-                end
-            end
-            Rayfield:Notify({
-                Title = "透视系统",
-                Content = "杀手透视已关闭",
-                Duration = 3,
-            })
-        end
+        end)
+    elseif staminaConnection then
+        staminaConnection:Disconnect()
+        staminaConnection = nil
     end
-})
+end)
 
-local SurvivorVisionToggle = AbandonedTab:CreateToggle({
-    Name = "透视幸存者（绿色高亮）",
-    CurrentValue = false,
-    Flag = "SurvivorVision",
-    Callback = function(Value)
-        if Value then
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= Players.LocalPlayer and player.Character then
-                    local highlight = Instance.new("Highlight")
-                    highlight.Parent = player.Character
-                    highlight.FillColor = Color3.fromRGB(0, 255, 0)
-                    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                    highlight.Name = "SurvivorHighlight"
-                end
-            end
-            Rayfield:Notify({
-                Title = "透视系统",
-                Content = "幸存者透视已激活",
-                Duration = 3,
-            })
-        else
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player.Character then
-                    local highlight = player.Character:FindFirstChild("SurvivorHighlight")
-                    if highlight then
-                        highlight:Destroy()
-                    end
-                end
-            end
-            Rayfield:Notify({
-                Title = "透视系统",
-                Content = "幸存者透视已关闭",
-                Duration = 3,
-            })
-        end
-    end
-})
+-- 自动维修发电机
+local autoRepair = false
+local repairConnection
 
--- 自动修理机子
-AbandonedTab:CreateSection("🔧 自动维修系统")
-local AutoRepairToggle = AbandonedTab:CreateToggle({
-    Name = "自动修理机子（3秒/次）",
-    CurrentValue = false,
-    Flag = "AutoRepair",
-    Callback = function(Value)
-        if Value then
-            spawn(function()
-                while AutoRepairToggle.CurrentValue do
-                    -- 自动修理逻辑
-                    Rayfield:Notify({
-                        Title = "维修系统",
-                        Content = "正在进行机器维修...",
-                        Duration = 1,
-                    })
-                    task.wait(3) -- 3秒修一次
-                end
-            end)
-        else
-            Rayfield:Notify({
-                Title = "维修系统",
-                Content = "自动修理已停止",
-                Duration = 3,
-            })
-        end
-    end
-})
-
--- 自动格挡
-AbandonedTab:CreateSection("🛡️ 防御系统")
-local AutoBlockToggle = AbandonedTab:CreateToggle({
-    Name = "自动格挡（访客1337）",
-    CurrentValue = false,
-    Flag = "AutoBlock",
-    Callback = function(Value)
-        if Value then
-            Rayfield:Notify({
-                Title = "防御系统",
-                Content = "自动格挡已激活",
-                Duration = 3,
-            })
-            
-            spawn(function()
-                while AutoBlockToggle.CurrentValue do
-                    local player = Players.LocalPlayer
-                    local character = player.Character
-                    if character then
-                        local humanoid = character:FindFirstChild("Humanoid")
-                        if humanoid then
-                            humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+AbandonedSection:NewToggle("自动维修发电机", "每三秒修一次", function(state)
+    autoRepair = state
+    if autoRepair then
+        repairConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            -- 查找发电机
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj.Name:lower():find("generator") or obj.Name:lower():find("gen") then
+                    -- 尝试维修发电机
+                    local args = {
+                        [1] = obj,
+                        [2] = "Repair"
+                    }
+                    
+                    -- 尝试调用远程事件
+                    local events = game:GetService("ReplicatedStorage"):GetChildren()
+                    for _, event in ipairs(events) do
+                        if event:IsA("RemoteEvent") then
+                            event:FireServer(unpack(args))
+                            break
                         end
                     end
-                    task.wait(0.1)
+                    
+                    -- 每三秒修一次
+                    wait(3)
                 end
-            end)
-        else
-            Rayfield:Notify({
-                Title = "防御系统",
-                Content = "自动格挡已关闭",
-                Duration = 3,
-            })
-        end
+            end
+        end)
+    elseif repairConnection then
+        repairConnection:Disconnect()
+        repairConnection = nil
     end
-})
+end)
 
--- 谢德来茨基自动挥刀
-AbandonedTab:CreateSection("⚔️ 攻击系统")
-local AutoSwingToggle = AbandonedTab:CreateToggle({
-    Name = "谢德来茨基自动挥刀",
-    CurrentValue = false,
-    Flag = "AutoSwing",
-    Callback = function(Value)
-        if Value then
-            spawn(function()
-                while AutoSwingToggle.CurrentValue do
-                    local player = Players.LocalPlayer
-                    local character = player.Character
-                    if character then
-                        local tool = character:FindFirstChildOfClass("Tool")
-                        if tool then
-                            tool:Activate() -- 触发挥刀动作
-                        end
+-- 传送到杀手那边
+AbandonedSection:NewButton("传送到杀手", "传送到杀手位置", function()
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character then
+            local killerRoot = player.Character:FindFirstChild("HumanoidRootPart")
+            if killerRoot then
+                local localChar = game.Players.LocalPlayer.Character
+                if localChar then
+                    local localRoot = localChar:FindFirstChild("HumanoidRootPart")
+                    if localRoot then
+                        localRoot.CFrame = killerRoot.CFrame * CFrame.new(0, 0, 5)
                     end
-                    task.wait(0.5)
                 end
-            end)
-            Rayfield:Notify({
-                Title = "攻击系统",
-                Content = "自动挥刀已激活",
-                Duration = 3,
-            })
-        else
-            Rayfield:Notify({
-                Title = "攻击系统",
-                Content = "自动挥刀已关闭",
-                Duration = 3,
-            })
+            end
         end
     end
-})
+end)
 
--- ==================== 完成UI加载 ====================
-Rayfield:LoadConfiguration()
+-- 透视所有幸存者+杀手
+local abandonedESP = false
+local abandonedESPObjects = {}
 
--- 初始通知
-Rayfield:Notify({
-    Title = "系统就绪",
-    Content = "通用功能与被遗弃功能已加载完成!",
-    Duration = 5,
-})
+AbandonedSection:NewToggle("透视玩家", "高亮显示玩家", function(state)
+    abandonedESP = state
+    if not abandonedESP then
+        for _, obj in pairs(abandonedESPObjects) do
+            if obj then
+                obj:Remove()
+            end
+        end
+        abandonedESPObjects = {}
+        return
+    end
+    
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Character then
+            local highlight = Instance.new("Highlight")
+            highlight.Parent = player.Character
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            
+            -- 显示名字
+            local billboard = Instance.new("BillboardGui")
+            billboard.Parent = player.Character.Head
+            billboard.Size = UDim2.new(0, 100, 0, 50)
+            billboard.StudsOffset = Vector3.new(0, 2, 0)
+            billboard.AlwaysOnTop = true
+            
+            local text = Instance.new("TextLabel")
+            text.Parent = billboard
+            text.Size = UDim2.new(1, 0, 1, 0)
+            text.Text = player.Name
+            text.TextScaled = true
+            text.BackgroundTransparency = 1
+            
+            -- 根据角色类型设置颜色
+            if player.Name == "Killer" or player.Team and player.Team.Name:lower():find("killer") then
+                highlight.FillColor = Color3.new(1, 0, 0) -- 红色
+                text.TextColor3 = Color3.new(1, 0, 0)
+            else
+                highlight.FillColor = Color3.new(0, 1, 0) -- 绿色
+                text.TextColor3 = Color3.new(0, 1, 0)
+            end
+            
+            table.insert(abandonedESPObjects, highlight)
+            table.insert(abandonedESPObjects, billboard)
+        end
+    end
+end)
 
-print("终极游戏辅助UI系统加载完成")
+-- 传送到发电机
+AbandonedSection:NewButton("传送到发电机", "传送到发电机位置", function()
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name:lower():find("generator") or obj.Name:lower():find("gen") then
+            local localChar = game.Players.LocalPlayer.Character
+            if localChar then
+                local localRoot = localChar:FindFirstChild("HumanoidRootPart")
+                if localRoot then
+                    localRoot.CFrame = obj.CFrame * CFrame.new(0, 3, 0)
+                    break
+                end
+            end
+        end
+    end
+end)
+
+-- 初始化
+game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    if flying and flyConnection then
+        flyConnection:Disconnect()
+        flying = false
+    end
+end)
+
+print("小风脚本加载成功！")
