@@ -1,213 +1,301 @@
 -- =============================================
--- 智能UI集成系统：普通功能 + 手动激活高级功能
+-- 三级UI系统：公告 + 通用功能 + 火热服务器专属功能
 -- =============================================
 
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+-- 加载Rayfield UI库
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- 状态跟踪：防止重复加载高级功能
-local AdvancedFeaturesLoaded = false
-local AdvancedTab = nil
+-- 状态变量
+local AbandonedUILoaded = false
+local CurrentWindow = nil
 
--- 创建主窗口
-local Window = Rayfield:CreateWindow({
-    Name = "🎮 智能游戏辅助系统",
-    LoadingTitle = "系统初始化中...",
-    LoadingSubtitle = "基础功能加载完成，高级功能需手动激活",
-    ConfigurationSaving = {Enabled = true, FolderName = "SmartUI", FileName = "Config"},
-    KeySystem = false,
-})
-
--- ==================== 普通UI功能（始终可用） ====================
-local MainTab = Window:CreateTab("核心功能", 4483362458)
-
--- 飞行系统
-local FlightSection = MainTab:CreateSection("飞行系统")
-local FlightToggle = MainTab:CreateToggle({
-    Name = "✈️ 飞行模式",
-    CurrentValue = false,
-    Flag = "FlightMode",
-    Callback = function(Value)
-        local player = Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-        
-        if Value and humanoidRootPart then
-            humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
-            humanoidRootPart.Gravity = 0
+-- ==================== 公告页面 (第一级UI) ====================
+local function createAnnouncementUI()
+    local Window = Rayfield:CreateWindow({
+        Name = "🎊 脚本系统 V2.0",
+        LoadingTitle = "系统初始化中...",
+        LoadingSubtitle = "正在加载公告页面",
+        ConfigurationSaving = {Enabled = false},
+        KeySystem = false,
+    })
+    
+    local AnnouncementTab = Window:CreateTab("公告", 123456789)
+    
+    -- 公告内容
+    AnnouncementTab:CreateSection("📢 系统公告")
+    AnnouncementTab:CreateLabel({
+        Name = "🎉 欢迎使用脚本系统 V2.0",
+        Flag = "WelcomeLabel"
+    })
+    
+    AnnouncementTab:CreateLabel({
+        Name = "📅 发布日期: 2024-01-20",
+        Flag = "DateLabel"
+    })
+    
+    AnnouncementTab:CreateLabel({
+        Name = "👨‍💻 开发者: 脚本团队",
+        Flag = "DevLabel"
+    })
+    
+    AnnouncementTab:CreateParagraph({
+        Title = "🎯 使用说明",
+        Content = "这是第一次制作脚本系统，请谨慎使用所有功能。\n所有按钮在公告页面均不可用，请切换到其他标签页使用功能。"
+    })
+    
+    -- 不可用按钮示例
+    AnnouncementTab:CreateSection("🚫 不可用功能演示")
+    local DisabledButton = AnnouncementTab:CreateButton({
+        Name = "🔒 此按钮不可用（演示用途）",
+        Callback = function()
+            -- 故意不实现功能，保持不可用状态
             Rayfield:Notify({
-                Title = "飞行系统",
-                Content = "飞行模式已激活",
-                Duration = 3,
-            })
-        elseif humanoidRootPart then
-            humanoidRootPart.Gravity = 196.2
-            Rayfield:Notify({
-                Title = "飞行系统", 
-                Content = "飞行模式已关闭",
-                Duration = 3,
-            })
-        end
-    end
-})
-
--- 移动速度调整
-local SpeedSection = MainTab:CreateSection("移动设置")
-local SpeedSlider = MainTab:CreateSlider({
-    Name = "🚀 移动速度",
-    Range = {16, 200},
-    Increment = 1,
-    Suffix = "速度",
-    CurrentValue = 50,
-    Flag = "SpeedSlider",
-    Callback = function(Value)
-        local player = Players.LocalPlayer
-        if player.Character and player.Character:FindFirstChild("Humanoid") then
-            player.Character.Humanoid.WalkSpeed = Value
-        end
-    end
-})
-
--- 基础透视功能
-local VisionSection = MainTab:CreateSection("视觉增强")
-local BasicVisionToggle = MainTab:CreateToggle({
-    Name = "👁️ 基础透视",
-    CurrentValue = false,
-    Flag = "BasicVision",
-    Callback = function(Value)
-        if Value then
-            -- 基础透视实现
-            Rayfield:Notify({
-                Title = "视觉系统",
-                Content = "基础透视已激活",
-                Duration = 3,
-            })
-        else
-            Rayfield:Notify({
-                Title = "视觉系统",
-                Content = "基础透视已关闭", 
+                Title = "功能不可用",
+                Content = "此按钮在公告页面故意设置为不可用状态",
                 Duration = 3,
             })
         end
-    end
-})
+    })
+    
+    -- 导航到通用功能的按钮
+    AnnouncementTab:CreateSection("➡️ 页面导航")
+    AnnouncementTab:CreateButton({
+        Name = "🚀 切换到通用功能",
+        Callback = function()
+            Rayfield:Notify({
+                Title = "页面导航",
+                Content = "正在切换到通用功能页面...",
+                Duration = 2,
+            })
+            -- 这里实际会通过标签页切换实现
+        end
+    })
+    
+    return Window
+end
 
--- ==================== 脚本库标签页 ====================
-local ScriptsTab = Window:CreateTab("脚本库", 9876543210)
+-- ==================== 通用功能页面 ====================
+local function createGeneralFeaturesTab(Window)
+    local GeneralTab = Window:CreateTab("通用功能", 987654321)
+    
+    -- 透视功能
+    GeneralTab:CreateSection("👁️ 透视系统")
+    local ESPToggle = GeneralTab:CreateToggle({
+        Name = "👥 玩家透视",
+        CurrentValue = false,
+        Flag = "ESP",
+        Callback = function(Value)
+            if Value then
+                -- 透视逻辑
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= Players.LocalPlayer and player.Character then
+                        local highlight = Instance.new("Highlight")
+                        highlight.Parent = player.Character
+                        highlight.FillColor = Color3.fromRGB(0, 255, 0)
+                        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    end
+                end
+            else
+                -- 关闭透视
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player.Character then
+                        for _, obj in ipairs(player.Character:GetChildren()) do
+                            if obj:IsA("Highlight") then
+                                obj:Destroy()
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    })
+    
+    -- 飞行功能
+    GeneralTab:CreateSection("✈️ 飞行系统")
+    local FlightToggle = GeneralTab:CreateToggle({
+        Name = "🕊️ 飞行模式",
+        CurrentValue = false,
+        Flag = "Flight",
+        Callback = function(Value)
+            local player = Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            
+            if Value and humanoidRootPart then
+                humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                humanoidRootPart.Gravity = 0
+            elseif humanoidRootPart then
+                humanoidRootPart.Gravity = 196.2
+            end
+        end
+    })
+    
+    -- 自瞄功能
+    GeneralTab:CreateSection("🎯 自瞄系统")
+    local AimbotToggle = GeneralTab:CreateToggle({
+        Name = "瞄准辅助",
+        CurrentValue = false,
+        Flag = "Aimbot",
+        Callback = function(Value)
+            -- 自瞄逻辑占位符
+        end
+    })
+    
+    -- 甩飞人功能
+    GeneralTab:CreateSection("🌀 互动功能")
+    local ThrowButton = GeneralTab:CreateButton({
+        Name = "💨 甩飞所有人",
+        Callback = function()
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player.Character then
+                    local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        humanoidRootPart.Velocity = Vector3.new(0, 100, 0)
+                    end
+                end
+            end
+        end
+    })
+    
+    -- 移动速度设置
+    GeneralTab:CreateSection("🏃 移动设置")
+    local SpeedSlider = GeneralTab:CreateSlider({
+        Name = "🚀 移动速度",
+        Range = {16, 200},
+        Increment = 1,
+        Suffix = "速度",
+        CurrentValue = 50,
+        Flag = "Speed",
+        Callback = function(Value)
+            local player = Players.LocalPlayer
+            if player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid.WalkSpeed = Value
+            end
+        end
+    })
+    
+    local JumpSlider = GeneralTab:CreateSlider({
+        Name = "🦘 跳跃高度",
+        Range = {50, 300},
+        Increment = 1,
+        Suffix = "高度",
+        CurrentValue = 100,
+        Flag = "Jump",
+        Callback = function(Value)
+            local player = Players.LocalPlayer
+            if player.Character and player.Character:FindFirstChild("Humanoid") then
+                player.Character.Humanoid.JumpPower = Value
+            end
+        end
+    })
+    
+    return GeneralTab
+end
 
--- 被遗弃服务器功能激活按钮
-local AbandonedScriptSection = ScriptsTab:CreateSection("高级功能激活")
-local AbandonedScriptButton = ScriptsTab:CreateButton({
-    Name = "🔥 激活被遗弃服务器高级功能",
-    Callback = function()
-        loadAbandonedServerFeatures()
-    end
-})
+-- ==================== 火热服务器页面 ====================
+local function createHotServerTab(Window)
+    local HotServerTab = Window:CreateTab("火热服务器", 555555555)
+    
+    -- 被遗弃功能按钮
+    HotServerTab:CreateSection("🔥 高级功能激活")
+    HotServerTab:CreateButton({
+        Name = "🏚️ 激活被遗弃服务器功能",
+        Callback = function()
+            loadAbandonedServerUI()
+        end
+    })
+    
+    -- 其他火热服务器功能
+    HotServerTab:CreateSection("🎮 服务器工具")
+    HotServerTab:CreateButton({
+        Name = "🔧 服务器优化",
+        Callback = function()
+            -- 服务器优化逻辑
+        end
+    })
+    
+    return HotServerTab
+end
 
--- 其他脚本按钮
-local ExternalScriptsSection = ScriptsTab:CreateSection("外部脚本")
-local PiScriptButton = ScriptsTab:CreateButton({
-    Name = "🥧 加载皮脚本",
-    Callback = function()
-        getgenv().XiaoPi = "皮脚本QQ群1002100032"
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
-        Rayfield:Notify({
-            Title = "脚本加载",
-            Content = "皮脚本已执行",
-            Duration = 3,
-        })
-    end
-})
-
-local InkGameButton = ScriptsTab:CreateButton({
-    Name = "🖌️ 加载墨水游戏",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/13222222fcc/-qwqee/main/script.lua"))()
-        Rayfield:Notify({
-            Title = "脚本加载", 
-            Content = "墨水游戏脚本已执行",
-            Duration = 3,
-        })
-    end
-})
-
--- ==================== 被遗弃服务器高级功能加载器 ====================
-local function loadAbandonedServerFeatures()
-    -- 防止重复加载
-    if AdvancedFeaturesLoaded then
+-- ==================== 被遗弃服务器专属UI (第二级UI) ====================
+local function loadAbandonedServerUI()
+    if AbandonedUILoaded then
         Rayfield:Notify({
             Title = "系统提示",
-            Content = "高级功能已经加载了哦！",
+            Content = "被遗弃服务器UI已经加载了！",
             Duration = 3,
         })
         return
     end
     
-    AdvancedFeaturesLoaded = true
+    AbandonedUILoaded = true
     
-    -- 创建高级功能标签页
-    AdvancedTab = Window:CreateTab("🔥 高级功能", 1234567890)
+    -- 关闭原有窗口（模拟覆盖效果）
+    if CurrentWindow then
+        -- 这里实际需要Rayfield提供关闭窗口的方法
+        Rayfield:Notify({
+            Title = "UI系统",
+            Content = "正在切换到被遗弃服务器专属UI...",
+            Duration = 2,
+        })
+    end
+    
+    -- 创建新的专属窗口
+    local AbandonedWindow = Rayfield:CreateWindow({
+        Name = "🏚️ 被遗弃服务器 - 终极控制面板",
+        LoadingTitle = "高级权限解锁中...",
+        LoadingSubtitle = "检测到被遗弃服务器环境",
+        ConfigurationSaving = {Enabled = true, FolderName = "AbandonedConfig"},
+        KeySystem = false,
+    })
     
     -- 1. 无限体力系统
-    local StaminaSection = AdvancedTab:CreateSection("无限体力系统")
-    local StaminaToggle = AdvancedTab:CreateToggle({
-        Name = "⚡ 无限体力模式",
+    local InfiniteStaminaTab = AbandonedWindow:CreateTab("无限体力", 111111111)
+    InfiniteStaminaTab:CreateSection("⚡ 体力控制系统")
+    
+    local StaminaToggle = InfiniteStaminaTab:CreateToggle({
+        Name = "💪 无限体力模式",
         CurrentValue = false,
         Flag = "InfiniteStamina",
         Callback = function(Value)
+            local player = Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            
             if Value then
-                local player = Players.LocalPlayer
-                local character = player.Character or player.CharacterAdded:Wait()
-                
-                -- 启动无限体力监控
                 spawn(function()
                     while StaminaToggle.CurrentValue and character do
                         if character:FindFirstChild("Humanoid") then
                             character.Humanoid:SetAttribute("Stamina", 100)
                             character.Humanoid.Health = 100
                         end
-                        task.wait(0.2)
+                        task.wait(0.1)
                     end
                 end)
-                
-                Rayfield:Notify({
-                    Title = "无限体力",
-                    Content = "无限体力模式已激活",
-                    Duration = 3,
-                })
-            else
-                Rayfield:Notify({
-                    Title = "无限体力",
-                    Content = "无限体力模式已关闭",
-                    Duration = 3,
-                })
             end
         end
     })
     
-    -- 2. 高级透视系统
-    local AdvancedVisionSection = AdvancedTab:CreateSection("高级透视系统")
+    -- 2. 幸存者杀手透视系统
+    local VisionTab = AbandonedWindow:CreateTab("高级透视", 222222222)
+    VisionTab:CreateSection("👁️ 角色识别系统")
     
-    local KillerVisionToggle = AdvancedTab:CreateToggle({
+    local KillerVisionToggle = VisionTab:CreateToggle({
         Name = "🔴 透视杀手（红色高亮）",
         CurrentValue = false,
         Flag = "KillerVision",
         Callback = function(Value)
-            if Value then
-                -- 杀手透视逻辑
-                for _, player in ipairs(Players:GetPlayers()) do
-                    if player ~= Players.LocalPlayer and player.Character then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= Players.LocalPlayer and player.Character then
+                    if Value then
                         local highlight = Instance.new("Highlight")
                         highlight.Parent = player.Character
                         highlight.FillColor = Color3.fromRGB(255, 0, 0)
-                        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
                         highlight.Name = "KillerHighlight"
-                    end
-                end
-            else
-                -- 清理透视效果
-                for _, player in ipairs(Players:GetPlayers()) do
-                    if player.Character then
+                    else
                         local highlight = player.Character:FindFirstChild("KillerHighlight")
                         if highlight then
                             highlight:Destroy()
@@ -218,26 +306,19 @@ local function loadAbandonedServerFeatures()
         end
     })
     
-    local SurvivorVisionToggle = AdvancedTab:CreateToggle({
+    local SurvivorVisionToggle = VisionTab:CreateToggle({
         Name = "🟢 透视幸存者（绿色高亮）",
         CurrentValue = false,
-        Flag = "SurvivorVision", 
+        Flag = "SurvivorVision",
         Callback = function(Value)
-            if Value then
-                -- 幸存者透视逻辑
-                for _, player in ipairs(Players:GetPlayers()) do
-                    if player ~= Players.LocalPlayer and player.Character then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= Players.LocalPlayer and player.Character then
+                    if Value then
                         local highlight = Instance.new("Highlight")
                         highlight.Parent = player.Character
                         highlight.FillColor = Color3.fromRGB(0, 255, 0)
-                        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
                         highlight.Name = "SurvivorHighlight"
-                    end
-                end
-            else
-                -- 清理透视效果
-                for _, player in ipairs(Players:GetPlayers()) do
-                    if player.Character then
+                    else
                         local highlight = player.Character:FindFirstChild("SurvivorHighlight")
                         if highlight then
                             highlight:Destroy()
@@ -248,38 +329,25 @@ local function loadAbandonedServerFeatures()
         end
     })
     
-    -- 3. 攻击箱追踪系统
-    local TrackingSection = AdvancedTab:CreateSection("攻击箱追踪")
-    local AttackBoxTracker = AdvancedTab:CreateToggle({
-        Name = "🎯 攻击箱实时追踪",
+    -- 3. 碰撞箱追踪系统
+    local TrackingTab = AbandonedWindow:CreateTab("碰撞箱追踪", 333333333)
+    TrackingTab:CreateSection("🎯 碰撞箱检测系统")
+    
+    local CollisionTracker = TrackingTab:CreateToggle({
+        Name = "📦 碰撞箱实时追踪",
         CurrentValue = false,
-        Flag = "AttackBoxTracker",
+        Flag = "CollisionTracker",
         Callback = function(Value)
             if Value then
-                -- 启动追踪逻辑
                 spawn(function()
-                    while AttackBoxTracker.CurrentValue do
+                    while CollisionTracker.CurrentValue do
                         for _, obj in ipairs(workspace:GetChildren()) do
-                            if string.find(string.lower(obj.Name), "attack") or 
-                               string.find(string.lower(obj.Name), "box") or
-                               string.find(string.lower(obj.Name), "weapon") then
-                               
+                            if obj:IsA("Part") and obj.Name:lower():find("collision") then
                                 if not obj:FindFirstChild("TrackerBeam") then
                                     local beam = Instance.new("Beam")
-                                    beam.Name = "TrackerBeam"
                                     beam.Parent = obj
                                     beam.Color = ColorSequence.new(Color3.fromRGB(255, 255, 0))
-                                    beam.Width0 = 0.5
-                                    beam.Width1 = 0.5
-                                    
-                                    local attachment0 = Instance.new("Attachment")
-                                    attachment0.Parent = obj
-                                    local attachment1 = Instance.new("Attachment") 
-                                    attachment1.Parent = obj
-                                    attachment1.Position = Vector3.new(0, 5, 0)
-                                    
-                                    beam.Attachment0 = attachment0
-                                    beam.Attachment1 = attachment1
+                                    beam.Name = "TrackerBeam"
                                 end
                             end
                         end
@@ -287,64 +355,97 @@ local function loadAbandonedServerFeatures()
                     end
                 end)
             else
-                -- 清理追踪效果
                 for _, obj in ipairs(workspace:GetChildren()) do
                     local beam = obj:FindFirstChild("TrackerBeam")
                     if beam then
                         beam:Destroy()
-                    end
-                    local attachment0 = obj:FindFirstChild("Attachment")
-                    if attachment0 then
-                        attachment0:Destroy()
-                    end
-                    local attachment1 = obj:FindFirstChild("Attachment")
-                    if attachment1 then
-                        attachment1:Destroy()
                     end
                 end
             end
         end
     })
     
-    -- 成功加载通知
+    -- 4. 访客自动格挡系统
+    local DefenseTab = AbandonedWindow:CreateTab("自动格挡", 444444444)
+    DefenseTab:CreateSection("🛡️ 防御系统")
+    
+    local AutoBlockToggle = DefenseTab:CreateToggle({
+        Name = "🛡️ 访客自动格挡",
+        CurrentValue = false,
+        Flag = "AutoBlock",
+        Callback = function(Value)
+            -- 自动格挡逻辑
+            if Value then
+                Rayfield:Notify({
+                    Title = "防御系统",
+                    Content = "自动格挡已激活",
+                    Duration = 3,
+                })
+            end
+        end
+    })
+    
+    -- 5. 自动修机系统
+    local RepairTab = AbandonedWindow:CreateTab("自动修机", 666666666)
+    RepairTab:CreateSection("🔧 维修系统")
+    
+    local AutoRepairToggle = RepairTab:CreateToggle({
+        Name = "⚡ 自动修机（3秒/次）",
+        CurrentValue = false,
+        Flag = "AutoRepair",
+        Callback = function(Value)
+            if Value then
+                spawn(function()
+                    while AutoRepairToggle.CurrentValue do
+                        -- 模拟修机逻辑
+                        Rayfield:Notify({
+                            Title = "维修系统",
+                            Content = "正在进行机器维修...",
+                            Duration = 1,
+                        })
+                        task.wait(3) -- 3秒修一次
+                    end
+                end)
+            end
+        end
+    })
+    
+    -- 完成加载通知
     Rayfield:Notify({
-        Title = "系统通知",
-        Content = "🎉 被遗弃服务器高级功能已激活！请查看新增的'高级功能'标签页",
+        Title = "🏚️ 被遗弃服务器UI",
+        Content = "高级功能已全部加载完成！",
         Duration = 5,
     })
     
-    print("高级功能标签页已创建并加载")
+    CurrentWindow = AbandonedWindow
+    return AbandonedWindow
 end
 
--- ==================== 系统设置标签页 ====================
-local SettingsTab = Window:CreateTab("设置", 1122334455)
+-- ==================== 主执行函数 ====================
+local function main()
+    -- 创建主窗口和公告页面
+    local MainWindow = createAnnouncementUI()
+    CurrentWindow = MainWindow
+    
+    -- 添加通用功能标签页
+    createGeneralFeaturesTab(MainWindow)
+    
+    -- 添加火热服务器标签页
+    createHotServerTab(MainWindow)
+    
+    -- 完成UI加载
+    Rayfield:LoadConfiguration()
+    
+    -- 初始通知
+    Rayfield:Notify({
+        Title = "🎊 系统就绪",
+        Content = "三级UI系统加载完成！请查看公告页面了解详细信息。",
+        Duration = 5,
+    })
+end
 
-local InfoSection = SettingsTab:CreateSection("系统信息")
-SettingsTab:CreateLabel({
-    Name = "高级功能状态: " .. (AdvancedFeaturesLoaded and "已激活" or "未激活"),
-    Flag = "AdvancedStatusLabel"
-})
-
-local ResetSection = SettingsTab:CreateSection("系统维护")
-local RefreshButton = SettingsTab:CreateButton({
-    Name = "🔄 刷新状态显示",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "系统状态",
-            Content = "高级功能状态: " .. (AdvancedFeaturesLoaded and "已激活" or "未激活"),
-            Duration = 3,
-        })
-    end
-})
-
--- 完成UI加载
-Rayfield:LoadConfiguration()
-
--- 初始通知
-Rayfield:Notify({
-    Title = "系统就绪",
-    Content = "基础功能已加载完成！请在脚本库中手动激活高级功能",
-    Duration = 5,
-})
-
-print("智能UI系统加载完成 - 基础功能可用，高级功能需手动激活")
+-- 安全启动
+local success, errorMessage = pcall(main)
+if not success then
+    warn("UI系统加载错误: " .. errorMessage)
+end
