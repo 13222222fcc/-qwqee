@@ -1,501 +1,348 @@
--- 罗布乐思脚本UI源码 - 小风专属版
--- 完全公益，请勿倒卖
--- UI作者：小风 | 快手账号：小车 | 快手号：QQ3867888
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+local UIS = game:GetService("UserInputService")
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("小风脚本 - 完全公益版", "DarkTheme")
+-- 主UI框架
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NuoScript"
+ScreenGui.ResetOnSpawn = false
 
--- ===== 公告页面 =====
-local AnnouncementTab = Window:NewTab("公告")
-local AnnouncementSection = AnnouncementTab:NewSection("公告信息")
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 350, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -200)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
--- 公告内容
-AnnouncementSection:NewLabel("完全公益，请勿倒卖")
-AnnouncementSection:NewLabel("UI作者：小风")
-AnnouncementSection:NewLabel("快手账号：小车")
-AnnouncementSection:NewLabel("快手号：QQ3867888")
-AnnouncementSection:NewLabel("感谢使用!")
+-- 标题栏
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = MainFrame
 
--- 不可用按钮
-AnnouncementSection:NewButton("不可用按钮", "此按钮不可用", function()
-    -- 空函数，按钮不可用
-end)
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Size = UDim2.new(0.7, 0, 1, 0)
+Title.Position = UDim2.new(0.15, 0, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "喏脚本 [444442555848]"
+Title.TextColor3 = Color3.fromRGB(0, 200, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+Title.Parent = TitleBar
 
-AnnouncementSection:NewToggle("不可用切换", "此切换不可用", function(state)
-    -- 空函数，切换不可用
-end)
+-- 控制按钮
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+MinimizeButton.Position = UDim2.new(1, -60, 0, 0)
+MinimizeButton.BackgroundTransparency = 1
+MinimizeButton.Text = "_"
+MinimizeButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+MinimizeButton.Font = Enum.Font.SourceSansBold
+MinimizeButton.TextSize = 24
+MinimizeButton.Parent = TitleBar
 
--- ===== 通用脚本页面 =====
-local GeneralTab = Window:NewTab("通用脚本")
-local GeneralSection = GeneralTab:NewSection("通用功能")
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.BackgroundTransparency = 1
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 100, 100)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextSize = 18
+CloseButton.Parent = TitleBar
+
+-- 标签页框架
+local TabFrame = Instance.new("Frame")
+TabFrame.Name = "TabFrame"
+TabFrame.Size = UDim2.new(1, -20, 0, 30)
+TabFrame.Position = UDim2.new(0, 10, 0, 40)
+TabFrame.BackgroundTransparency = 1
+TabFrame.Parent = MainFrame
+
+-- 创建标签页按钮
+local AnnouncementTab = Instance.new("TextButton")
+AnnouncementTab.Name = "AnnouncementTab"
+AnnouncementTab.Size = UDim2.new(0.3, 0, 1, 0)
+AnnouncementTab.Position = UDim2.new(0, 0, 0, 0)
+AnnouncementTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+AnnouncementTab.BorderSizePixel = 0
+AnnouncementTab.Text = "公告"
+AnnouncementTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+AnnouncementTab.Font = Enum.Font.SourceSans
+AnnouncementTab.TextSize = 16
+AnnouncementTab.Parent = TabFrame
+
+local GeneralTab = Instance.new("TextButton")
+GeneralTab.Name = "GeneralTab"
+GeneralTab.Size = UDim2.new(0.3, 0, 1, 0)
+GeneralTab.Position = UDim2.new(0.35, 0, 0, 0)
+GeneralTab.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+GeneralTab.BorderSizePixel = 0
+GeneralTab.Text = "通用"
+GeneralTab.TextColor3 = Color3.fromRGB(200, 200, 200)
+GeneralTab.Font = Enum.Font.SourceSans
+GeneralTab.TextSize = 16
+GeneralTab.Parent = TabFrame
+
+local ForsakenTab = Instance.new("TextButton")
+ForsakenTab.Name = "ForsakenTab"
+ForsakenTab.Size = UDim2.new(0.3, 0, 1, 0)
+ForsakenTab.Position = UDim2.new(0.7, 0, 0, 0)
+ForsakenTab.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+ForsakenTab.BorderSizePixel = 0
+ForsakenTab.Text = "被遗弃"
+ForsakenTab.TextColor3 = Color3.fromRGB(200, 200, 200)
+ForsakenTab.Font = Enum.Font.SourceSans
+ForsakenTab.TextSize = 16
+ForsakenTab.Parent = TabFrame
+
+-- 内容框架
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Name = "ContentFrame"
+ContentFrame.Size = UDim2.new(1, -20, 1, -90)
+ContentFrame.Position = UDim2.new(0, 10, 0, 80)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.ClipsDescendants = true
+ContentFrame.Parent = MainFrame
+
+-- 公告页面
+local AnnouncementPage = Instance.new("ScrollingFrame")
+AnnouncementPage.Name = "AnnouncementPage"
+AnnouncementPage.Size = UDim2.new(1, 0, 1, 0)
+AnnouncementPage.BackgroundTransparency = 1
+AnnouncementPage.ScrollBarThickness = 5
+AnnouncementPage.Visible = true
+AnnouncementPage.Parent = ContentFrame
+
+local AnnouncementText = Instance.new("TextLabel")
+AnnouncementText.Name = "AnnouncementText"
+AnnouncementText.Size = UDim2.new(1, -20, 0, 350)
+AnnouncementText.Position = UDim2.new(0, 10, 0, 10)
+AnnouncementText.BackgroundTransparency = 1
+AnnouncementText.Text = "喏脚本公告\n\n做脚本19个月随便问\n\n版本: 444442555848\n\n功能持续更新中...\n有问题请反馈"
+AnnouncementText.TextColor3 = Color3.fromRGB(200, 200, 255)
+AnnouncementText.Font = Enum.Font.SourceSans
+AnnouncementText.TextSize = 18
+AnnouncementText.TextWrapped = true
+AnnouncementText.TextXAlignment = Enum.TextXAlignment.Left
+AnnouncementText.TextYAlignment = Enum.TextYAlignment.Top
+AnnouncementText.Parent = AnnouncementPage
+
+-- 通用页面
+local GeneralPage = Instance.new("ScrollingFrame")
+GeneralPage.Name = "GeneralPage"
+GeneralPage.Size = UDim2.new(1, 0, 1, 0)
+GeneralPage.BackgroundTransparency = 1
+GeneralPage.ScrollBarThickness = 5
+GeneralPage.Visible = false
+GeneralPage.Parent = ContentFrame
 
 -- 飞行功能
-local flying = false
-local flySpeed = 50
-local flyConnection
+local FlyToggle = Instance.new("TextButton")
+FlyToggle.Name = "FlyToggle"
+FlyToggle.Size = UDim2.new(1, -20, 0, 30)
+FlyToggle.Position = UDim2.new(0, 10, 0, 10)
+FlyToggle.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+FlyToggle.BorderSizePixel = 0
+FlyToggle.Text = "飞行 [关闭]"
+FlyToggle.TextColor3 = Color3.fromRGB(255, 150, 150)
+FlyToggle.Font = Enum.Font.SourceSans
+FlyToggle.TextSize = 16
+FlyToggle.Parent = GeneralPage
 
-GeneralSection:NewToggle("飞行", "启用/禁用飞行", function(state)
-    flying = state
-    if flying then
-        local player = game.Players.LocalPlayer
-        if player.Character then
-            local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-            if humanoidRootPart then
-                -- 禁用重力并重置速度
-                humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
-                humanoidRootPart.Gravity = 0
-                
-                -- 飞行控制连接
-                if flyConnection then flyConnection:Disconnect() end
-                flyConnection = game:GetService("RunService").Heartbeat:Connect(function()
-                    if flying and humanoidRootPart then
-                        local cam = workspace.CurrentCamera
-                        local moveDir = Vector3.new()
-                        
-                        -- WASD控制方向
-                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W) then
-                            moveDir = moveDir + (cam.CFrame.LookVector * flySpeed)
-                        end
-                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.S) then
-                            moveDir = moveDir - (cam.CFrame.LookVector * flySpeed)
-                        end
-                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A) then
-                            moveDir = moveDir - (cam.CFrame.RightVector * flySpeed)
-                        end
-                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D) then
-                            moveDir = moveDir + (cam.CFrame.RightVector * flySpeed)
-                        end
-                        -- 空格上升，Shift下降
-                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.Space) then
-                            moveDir = moveDir + (Vector3.new(0, 1, 0) * flySpeed)
-                        end
-                        if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.LeftShift) then
-                            moveDir = moveDir - (Vector3.new(0, 1, 0) * flySpeed)
-                        end
-                        
-                        humanoidRootPart.Velocity = moveDir
-                    end
-                end)
-            end
-        end
-    else
-        -- 关闭飞行
-        if flyConnection then
-            flyConnection:Disconnect()
-            flyConnection = nil
-        end
-        -- 恢复重力
-        local player = game.Players.LocalPlayer
-        if player.Character then
-            local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-            if humanoidRootPart then
-                humanoidRootPart.Gravity = 1
-                humanoidRootPart.Velocity = Vector3.new(0, 0, 0)
-            end
-        end
-    end
-end)
+-- 飞行速度滑块
+local FlySpeedLabel = Instance.new("TextLabel")
+FlySpeedLabel.Name = "FlySpeedLabel"
+FlySpeedLabel.Size = UDim2.new(1, -20, 0, 20)
+FlySpeedLabel.Position = UDim2.new(0, 10, 0, 50)
+FlySpeedLabel.BackgroundTransparency = 1
+FlySpeedLabel.Text = "飞行速度: 50"
+FlySpeedLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+FlySpeedLabel.Font = Enum.Font.SourceSans
+FlySpeedLabel.TextSize = 16
+FlySpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+FlySpeedLabel.Parent = GeneralPage
 
--- 飞行速度调整
-GeneralSection:NewSlider("飞行速度", "调整飞行速度", 500, 1, function(speed)
-    flySpeed = speed
-end)
+local FlySpeedSlider = Instance.new("TextBox")
+FlySpeedSlider.Name = "FlySpeedSlider"
+FlySpeedSlider.Size = UDim2.new(1, -20, 0, 25)
+FlySpeedSlider.Position = UDim2.new(0, 10, 0, 75)
+FlySpeedSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+FlySpeedSlider.BorderSizePixel = 0
+FlySpeedSlider.Text = "50"
+FlySpeedSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
+FlySpeedSlider.Font = Enum.Font.SourceSans
+FlySpeedSlider.TextSize = 16
+FlySpeedSlider.Parent = GeneralPage
 
--- 自定义移速
-GeneralSection:NewSlider("移动速度", "调整移动速度", 100, 16, function(speed)
-    local player = game.Players.LocalPlayer
-    if player.Character then
-        local humanoid = player.Character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid.WalkSpeed = speed
-        end
-    end
-end)
+-- 移动速度滑块
+local SpeedLabel = Instance.new("TextLabel")
+SpeedLabel.Name = "SpeedLabel"
+SpeedLabel.Size = UDim2.new(1, -20, 0, 20)
+SpeedLabel.Position = UDim2.new(0, 10, 0, 110)
+SpeedLabel.BackgroundTransparency = 1
+SpeedLabel.Text = "移动速度: 17"
+SpeedLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+SpeedLabel.Font = Enum.Font.SourceSans
+SpeedLabel.TextSize = 16
+SpeedLabel.TextXAlignment = Enum.TextXAlignment.Left
+SpeedLabel.Parent = GeneralPage
 
--- 甩飞所有人
-GeneralSection:NewButton("甩飞所有人", "甩飞所有玩家", function()
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player.Character then
-            local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-            if humanoidRootPart then
-                -- 随机方向甩飞
-                humanoidRootPart.Velocity = Vector3.new(
-                    math.random(-200, 200),
-                    math.random(150, 300),
-                    math.random(-200, 200)
-                )
-            end
-        end
-    end
-end)
+local SpeedSlider = Instance.new("TextBox")
+SpeedSlider.Name = "SpeedSlider"
+SpeedSlider.Size = UDim2.new(1, -20, 0, 25)
+SpeedSlider.Position = UDim2.new(0, 10, 0, 135)
+SpeedSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+SpeedSlider.BorderSizePixel = 0
+SpeedSlider.Text = "17"
+SpeedSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedSlider.Font = Enum.Font.SourceSans
+SpeedSlider.TextSize = 16
+SpeedSlider.Parent = GeneralPage
 
--- 透视功能
-local espEnabled = false
-local espObjects = {}
+-- 其他功能按钮
+local ThrowPlayers = Instance.new("TextButton")
+ThrowPlayers.Name = "ThrowPlayers"
+ThrowPlayers.Size = UDim2.new(1, -20, 0, 30)
+ThrowPlayers.Position = UDim2.new(0, 10, 0, 170)
+ThrowPlayers.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+ThrowPlayers.BorderSizePixel = 0
+ThrowPlayers.Text = "甩飞所有玩家"
+ThrowPlayers.TextColor3 = Color3.fromRGB(255, 150, 150)
+ThrowPlayers.Font = Enum.Font.SourceSans
+ThrowPlayers.TextSize = 16
+ThrowPlayers.Parent = GeneralPage
 
-GeneralSection:NewToggle("透视", "启用/禁用透视", function(state)
-    espEnabled = state
-    if espEnabled then
-        -- 为所有玩家添加高亮
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer and player.Character then
-                local highlight = Instance.new("Highlight")
-                highlight.Parent = player.Character
-                highlight.FillColor = Color3.fromRGB(0, 255, 0) -- 绿色
-                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                
-                table.insert(espObjects, highlight)
-            end
-        end
-    else
-        -- 移除所有高亮
-        for _, obj in pairs(espObjects) do
-            if obj then
-                obj:Remove()
-            end
-        end
-        espObjects = {}
-    end
-end)
+local SeePlayers = Instance.new("TextButton")
+SeePlayers.Name = "SeePlayers"
+SeePlayers.Size = UDim2.new(1, -20, 0, 30)
+SeePlayers.Position = UDim2.new(0, 10, 0, 210)
+SeePlayers.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+ThrowPlayers.BorderSizePixel = 0
+SeePlayers.Text = "透视所有玩家 [关闭]"
+SeePlayers.TextColor3 = Color3.fromRGB(255, 150, 150)
+SeePlayers.Font = Enum.Font.SourceSans
+SeePlayers.TextSize = 16
+SeePlayers.Parent = GeneralPage
 
--- 自瞄功能
-local aimbotEnabled = false
-local aimbotConnection
+-- 跳跃高度设置
+local JumpHeightLabel = Instance.new("TextLabel")
+JumpHeightLabel.Name = "JumpHeightLabel"
+JumpHeightLabel.Size = UDim2.new(1, -20, 0, 20)
+JumpHeightLabel.Position = UDim2.new(0, 10, 0, 250)
+JumpHeightLabel.BackgroundTransparency = 1
+JumpHeightLabel.Text = "跳跃高度: 50"
+JumpHeightLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+JumpHeightLabel.Font = Enum.Font.SourceSans
+JumpHeightLabel.TextSize = 16
+JumpHeightLabel.TextXAlignment = Enum.TextXAlignment.Left
+JumpHeightLabel.Parent = GeneralPage
 
-GeneralSection:NewToggle("自瞄", "启用/禁用自瞄", function(state)
-    aimbotEnabled = state
-    if aimbotEnabled then
-        aimbotConnection = game:GetService("RunService").RenderStepped:Connect(function()
-            local closestPlayer = nil
-            local closestDistance = math.huge
-            local localPlayer = game.Players.LocalPlayer
-            local localChar = localPlayer.Character
-            local localRoot = localChar and localChar:FindFirstChild("HumanoidRootPart")
-            
-            if not localRoot then return end
-            
-            -- 寻找最近的玩家
-            for _, player in ipairs(game.Players:GetPlayers()) do
-                if player ~= localPlayer and player.Character then
-                    local targetRoot = player.Character:FindFirstChild("HumanoidRootPart")
-                    if targetRoot then
-                        local distance = (targetRoot.Position - localRoot.Position).Magnitude
-                        if distance < closestDistance then
-                            closestDistance = distance
-                            closestPlayer = player
-                        end
-                    end
-                end
-            end
-            
-            -- 瞄准最近玩家
-            if closestPlayer and closestPlayer.Character then
-                local targetRoot = closestPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if targetRoot then
-                    workspace.CurrentCamera.CFrame = CFrame.new(
-                        workspace.CurrentCamera.CFrame.Position,
-                        targetRoot.Position
-                    )
-                end
-            end
-        end)
-    elseif aimbotConnection then
-        aimbotConnection:Disconnect()
-        aimbotConnection = nil
-    end
-end)
+local JumpHeightSlider = Instance.new("TextBox")
+JumpHeightSlider.Name = "JumpHeightSlider"
+JumpHeightSlider.Size = UDim2.new(1, -20, 0, 25)
+JumpHeightSlider.Position = UDim2.new(0, 10, 0, 275)
+JumpHeightSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+JumpHeightSlider.BorderSizePixel = 0
+JumpHeightSlider.Text = "50"
+JumpHeightSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
+JumpHeightSlider.Font = Enum.Font.SourceSans
+JumpHeightSlider.TextSize = 16
+JumpHeightSlider.Parent = GeneralPage
 
--- 摧毁服务器
-GeneralSection:NewButton("摧毁服务器?!?", "警告：此操作不可逆!", function()
-    -- 人物身上冒火效果
-    local player = game.Players.LocalPlayer
-    if player.Character then
-        local fire = Instance.new("Fire")
-        fire.Size = 15
-        fire.Heat = 25
-        fire.Parent = player.Character.Head
-        
-        local fire2 = Instance.new("Fire")
-        fire2.Size = 20
-        fire2.Heat = 30
-        fire2.Parent = player.Character.HumanoidRootPart
-    end
-    
-    -- 屏幕上方显示文字
-    local gui = Instance.new("ScreenGui")
-    gui.Parent = game.Players.LocalPlayer.PlayerGui
-    
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(1, 0, 0.1, 0)
-    text.Position = UDim2.new(0, 0, 0.1, 0)
-    text.Text = "退吧，这服务器坏了"
-    text.TextScaled = true
-    text.TextColor3 = Color3.new(1, 0, 0)
-    text.BackgroundTransparency = 1
-    text.Font = Enum.Font.GothamBlack
-    text.TextStrokeTransparency = 0
-    text.TextStrokeColor3 = Color3.new(0, 0, 0)
-    text.Parent = gui
-end)
+-- 撸按钮
+local LuButton = Instance.new("TextButton")
+LuButton.Name = "LuButton"
+LuButton.Size = UDim2.new(1, -20, 0, 30)
+LuButton.Position = UDim2.new(0, 10, 0, 310)
+LuButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+LuButton.BorderSizePixel = 0
+LuButton.Text = "撸"
+LuButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+LuButton.Font = Enum.Font.SourceSansBold
+LuButton.TextSize = 18
+LuButton.Parent = GeneralPage
 
--- ===== 被遗弃页面 =====
-local AbandonedTab = Window:NewTab("被遗弃")
-local AbandonedSection = AbandonedTab:NewSection("被遗弃功能")
+-- 被遗弃页面
+local ForsakenPage = Instance.new("ScrollingFrame")
+ForsakenPage.Name = "ForsakenPage"
+ForsakenPage.Size = UDim2.new(1, 0, 1, 0)
+ForsakenPage.BackgroundTransparency = 1
+ForsakenPage.ScrollBarThickness = 5
+ForsakenPage.Visible = false
+ForsakenPage.Parent = ContentFrame
 
--- 访客1337自动防御
-AbandonedSection:NewToggle("访客1337自动防御", "启用/禁用自动防御", function(state)
-    -- 自动防御逻辑可以在这里实现
-    if state then
-        -- 启用自动防御
-    else
-        -- 禁用自动防御
-    end
-end)
+-- 被遗弃功能按钮
+local functions = {
+    "无限体力 [关闭]",
+    "夜视 [关闭]",
+    "透视幸存者 [关闭]",
+    "透视杀手 [关闭]",
+    "访客1337自动防御 [关闭]"
+}
 
--- 无限体力
-local infiniteStamina = false
-local staminaConnection
+for i, funcName in ipairs(functions) do
+    local button = Instance.new("TextButton")
+    button.Name = funcName:gsub("%[.*%]", ""):gsub(" ", "")
+    button.Size = UDim2.new(1, -20, 0, 30)
+    button.Position = UDim2.new(0, 10, 0, 10 + (i-1)*40)
+    button.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+    button.BorderSizePixel = 0
+    button.Text = funcName
+    button.TextColor3 = Color3.fromRGB(255, 150, 150)
+    button.Font = Enum.Font.SourceSans
+    button.TextSize = 16
+    button.Parent = ForsakenPage
+end
 
-AbandonedSection:NewToggle("无限体力", "启用/禁用无限体力", function(state)
-    infiniteStamina = state
-    if infiniteStamina then
-        staminaConnection = game:GetService("RunService").Heartbeat:Connect(function()
-            local player = game.Players.LocalPlayer
-            if player.Character then
-                local humanoid = player.Character:FindFirstChild("Humanoid")
-                if humanoid then
-                    -- 保持奔跑状态
-                    humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
-                end
-            end
-        end)
-    elseif staminaConnection then
-        staminaConnection:Disconnect()
-        staminaConnection = nil
-    end
-end)
+-- 攻击箱调整
+local AttackBoxLabel = Instance.new("TextLabel")
+AttackBoxLabel.Name = "AttackBoxLabel"
+AttackBoxLabel.Size = UDim2.new(1, -20, 0, 20)
+AttackBoxLabel.Position = UDim2.new(0, 10, 0, 210)
+AttackBoxLabel.BackgroundTransparency = 1
+AttackBoxLabel.Text = "攻击箱调整: 650"
+AttackBoxLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+AttackBoxLabel.Font = Enum.Font.SourceSans
+AttackBoxLabel.TextSize = 16
+AttackBoxLabel.TextXAlignment = Enum.TextXAlignment.Left
+AttackBoxLabel.Parent = ForsakenPage
 
--- 自动维修发电机
-local autoRepair = false
-local repairConnection
+local AttackBoxSlider = Instance.new("TextBox")
+AttackBoxSlider.Name = "AttackBoxSlider"
+AttackBoxSlider.Size = UDim2.new(1, -20, 0, 25)
+AttackBoxSlider.Position = UDim2.new(0, 10, 0, 235)
+AttackBoxSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+AttackBoxSlider.BorderSizePixel = 0
+AttackBoxSlider.Text = "650"
+AttackBoxSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
+AttackBoxSlider.Font = Enum.Font.SourceSans
+AttackBoxSlider.TextSize = 16
+AttackBoxSlider.Parent = ForsakenPage
 
-AbandonedSection:NewToggle("自动维修发电机", "每三秒修一次", function(state)
-    autoRepair = state
-    if autoRepair then
-        repairConnection = game:GetService("RunService").Heartbeat:Connect(function()
-            -- 查找发电机
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj.Name:lower():find("generator") or obj.Name:lower():find("gen") then
-                    -- 模拟维修动作
-                    local args = {
-                        [1] = obj,
-                        [2] = "Repair"
-                    }
-                    
-                    -- 尝试调用维修事件
-                    local events = game:GetService("ReplicatedStorage"):GetChildren()
-                    for _, event in ipairs(events) do
-                        if event:IsA("RemoteEvent") then
-                            event:FireServer(unpack(args))
-                            break
-                        end
-                    end
-                    
-                    wait(3) -- 每三秒修一次
-                end
-            end
-        end)
-    elseif repairConnection then
-        repairConnection:Disconnect()
-        repairConnection = nil
-    end
-end)
+-- 攻击箱跟踪
+local AttackTrack = Instance.new("TextButton")
+AttackTrack.Name = "AttackTrack"
+AttackTrack.Size = UDim2.new(1, -20, 0, 30)
+AttackTrack.Position = UDim2.new(0, 10, 0, 270)
+AttackTrack.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+AttackTrack.BorderSizePixel = 0
+AttackTrack.Text = "攻击箱跟踪 [关闭]"
+AttackTrack.TextColor3 = Color3.fromRGB(255, 150, 150)
+AttackTrack.Font = Enum.Font.SourceSans
+AttackTrack.TextSize = 16
+AttackTrack.Parent = ForsakenPage
 
--- 传送到杀手那边
-AbandonedSection:NewButton("传送到杀手那边", "传送到杀手位置", function()
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player.Character then
-            local killerRoot = player.Character:FindFirstChild("HumanoidRootPart")
-            if killerRoot then
-                local localChar = game.Players.LocalPlayer.Character
-                if localChar then
-                    local localRoot = localChar:FindFirstChild("HumanoidRootPart")
-                    if localRoot then
-                        localRoot.CFrame = killerRoot.CFrame * CFrame.new(0, 0, 5)
-                        break
-                    end
-                end
-            end
-        end
-    end
-end)
-
--- 透视所有幸存者+杀手
-local abandonedESP = false
-local abandonedESPObjects = {}
-
-AbandonedSection:NewToggle("透视所有玩家", "幸存者绿色,杀手红色", function(state)
-    abandonedESP = state
-    if not abandonedESP then
-        -- 清除所有高亮
-        for _, obj in pairs(abandonedESPObjects) do
-            if obj then
-                obj:Remove()
-            end
-        end
-        abandonedESPObjects = {}
-        return
-    end
-    
-    -- 为所有玩家添加高亮和名字显示
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player.Character then
-            -- 创建高亮效果
-            local highlight = Instance.new("Highlight")
-            highlight.Parent = player.Character
-            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            
-            -- 创建名字显示
-            local billboard = Instance.new("BillboardGui")
-            billboard.Parent = player.Character.Head
-            billboard.Size = UDim2.new(0, 100, 0, 50)
-            billboard.StudsOffset = Vector3.new(0, 3, 0)
-            billboard.AlwaysOnTop = true
-            
-            local text = Instance.new("TextLabel")
-            text.Parent = billboard
-            text.Size = UDim2.new(1, 0, 1, 0)
-            text.Text = player.Name
-            text.TextScaled = true
-            text.BackgroundTransparency = 1
-            text.Font = Enum.Font.GothamBold
-            
-            -- 根据角色类型设置颜色
-            if player.Name:lower():find("killer") or player.Team and player.Team.Name:lower():find("killer") then
-                highlight.FillColor = Color3.new(1, 0, 0) -- 红色：杀手
-                text.TextColor3 = Color3.new(1, 0, 0)
-            else
-                highlight.FillColor = Color3.new(0, 1, 0) -- 绿色：幸存者
-                text.TextColor3 = Color3.new(0, 1, 0)
-            end
-            
-            table.insert(abandonedESPObjects, highlight)
-            table.insert(abandonedESPObjects, billboard)
-        end
-    end
-end)
-
--- 传送到发电机
-AbandonedSection:NewButton("传送到发电机", "传送到发电机位置", function()
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name:lower():find("generator") or obj.Name:lower():find("gen") then
-            local localChar = game.Players.LocalPlayer.Character
-            if localChar then
-                local localRoot = localChar:FindFirstChild("HumanoidRootPart")
-                if localRoot then
-                    localRoot.CFrame = obj.CFrame * CFrame.new(0, 3, 0)
-                    break
-                end
-            end
-        end
-    end
-end)
-
--- ===== 摧毁服务器页面（仅自己可见） =====
-local DestroyTab = Window:NewTab("摧毁脚本")
-local DestroySection = DestroyTab:NewSection("摧毁功能（仅自己可见）")
-
--- 摧毁1按钮
-DestroySection:NewButton("摧毁1", "人物冒火,显示退出文字", function()
-    -- 人物身上冒火
-    local player = game.Players.LocalPlayer
-    if player.Character then
-        local fire = Instance.new("Fire")
-        fire.Size = 12
-        fire.Heat = 20
-        fire.Parent = player.Character.Head
-        
-        local fire2 = Instance.new("Fire")
-        fire2.Size = 18
-        fire2.Heat = 25
-        fire2.Parent = player.Character.HumanoidRootPart
-    end
-    
-    -- 屏幕上方显示"退出？？？"红色字
-    local gui = Instance.new("ScreenGui")
-    gui.Parent = game.Players.LocalPlayer.PlayerGui
-    
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(1, 0, 0.1, 0)
-    text.Position = UDim2.new(0, 0, 0.2, 0)
-    text.Text = "退出？？？"
-    text.TextScaled = true
-    text.TextColor3 = Color3.new(1, 0, 0)
-    text.BackgroundTransparency = 1
-    text.Font = Enum.Font.GothamBlack
-    text.TextStrokeTransparency = 0
-    text.TextStrokeColor3 = Color3.new(0, 0, 0)
-    text.Parent = gui
-end)
-
--- 摧毁2按钮
-DestroySection:NewButton("摧毁2", "环境变黑,人物变黑,闪乱码,踢出", function()
-    -- 环境变成黑色
-    local lighting = game:GetService("Lighting")
-    lighting.Ambient = Color3.new(0, 0, 0)
-    lighting.OutdoorAmbient = Color3.new(0, 0, 0)
-    lighting.Brightness = 0
-    lighting.GlobalShadows = true
-    
-    -- 人物变成黑色
-    local player = game.Players.LocalPlayer
-    if player.Character then
-        for _, part in pairs(player.Character:GetChildren()) do
-            if part:IsA("Part") then
-                part.BrickColor = BrickColor.new("Really black")
-                part.Material = Enum.Material.Slate
-            end
-        end
-    end
-    
-    -- 屏幕上闪着乱码
-    local gui = Instance.new("ScreenGui")
-    gui.Parent = game.Players.LocalPlayer.PlayerGui
-    
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(1, 0, 1, 0)
-    text.Position = UDim2.new(0, 0, 0, 0)
-    text.Text = "68khdwhjjszmsabvjazvddsxxwzwzwjo"
-    text.TextScaled = true
-    text.TextColor3 = Color3.new(1, 0, 0)
-    text.BackgroundColor3 = Color3.new(0, 0, 0)
-    text.Font = Enum.Font.GothamBlack
-    text.Parent = gui
-    
-    -- 闪烁效果
-    local blinkConnection
-    blinkConnection = game:GetService("RunService").Heartbeat:Connect(function()
-        text.Visible = not text.Visible
-    end)
-    
-    -- 等待3秒后踢出玩家
-    wait(3)
-    if blinkConnection then
-        blinkConnection:Disconnect()
-    end
-    -- 踢出玩家并显示错误信息
-    player:Kick("错误代码267: ？你摧毁服务器干啥兄弟")
-end)
-
--- 初始化脚本
-game.Players.LocalPlayer.CharacterAdded:Connect(function()
-    -- 角色重生时重置状态
-    if flying and flyConnection then
-        flyConnection:Disconnect()
-        flying = false
-    end
-end)
-
-print("小风脚本加载成功！感谢使用！")
-
+-- 最小化状态图标
+local MinimizedIcon = Instance.new("TextButton")
+MinimizedIcon.Name = "MinimizedIcon"
+MinimizedIcon.Size = UDim2.new(0, 40, 0,
