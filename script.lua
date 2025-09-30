@@ -1,262 +1,130 @@
---[[
-喏脚本 UI
-功能：
-  1. 公告
-  2. 通用（飞行、调整速度、甩飞、透视、跳跃、撸）
-  3. 被遗弃（无限体力、夜视、透视、访客防御、攻击箱）
-支持：窗口拖动、最小化、隐藏
-作者：Copilot
-]]
+-- 主窗口框架
+local mainWindow = Window:create("脚本助手", 500, 700)
 
--- UI库示例（如需适配其他库，请替换UI部分）
-local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+-- 创建选项卡控件
+local tabControl = TabControl:create()
+tabControl:setPosition(10, 10)
+tabControl:setSize(480, 650)
 
--- 主窗口
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-ScreenGui.Name = "NoScriptUI"
+-- 页面1: 公告页 (禁用状态)
+local noticeTab = TabPage:create("公告")
+local noticeLabel = Label:create("第1次做脚本\n不懂\n有什么位置不行叫我", 20, 50, 440, 150)
+noticeLabel:setFontSize(16)
+noticeLabel:setTextColor(0xCCCCCC)
+noticeTab:addChild(noticeLabel)
+noticeTab:setEnabled(false)  -- 禁用该页面 <x-preset class="no-tts reference-tag disable-to-doc" data-index="1">1</x-preset>
 
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 400, 0, 350)
-MainFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.Name = "MainFrame"
+-- 页面2: 通用功能页
+local generalTab = TabPage:create("通用")
+local scrollPanel = ScrollPanel:create(0, 0, 460, 600)
 
-local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.BackgroundTransparency = 1
-Title.Text = "喏脚本"
-Title.TextColor3 = Color3.fromRGB(255, 212, 90)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 26
+-- 飞行功能
+local flyBtn = Button:create("飞行", 20, 20, 100, 30)
+local flySpeed = Slider:create("飞行速度:", 130, 25, 200, 25, 1, 100, 10)
+scrollPanel:addChild(flyBtn)
+scrollPanel:addChild(flySpeed)
 
--- 最小化与隐藏按钮
-local MinBtn = Instance.new("TextButton", MainFrame)
-MinBtn.Size = UDim2.new(0, 30, 0, 30)
-MinBtn.Position = UDim2.new(1, -60, 0, 0)
-MinBtn.Text = "_"
-MinBtn.TextSize = 24
+-- 透视功能
+local wallhackBtn = Checkbox:create("透视（彩色亮光穿透）", 20, 70)
+scrollPanel:addChild(wallhackBtn)
 
-local HideBtn = Instance.new("TextButton", MainFrame)
-HideBtn.Size = UDim2.new(0, 30, 0, 30)
-HideBtn.Position = UDim2.new(1, -30, 0, 0)
-HideBtn.Text = "×"
-HideBtn.TextSize = 24
+-- 自瞄功能
+local aimbotBtn = Checkbox:create("自瞄（视角跟随玩家）", 20, 110)
+scrollPanel:addChild(aimbotBtn)
 
--- 页面切换
-local TabFrame = Instance.new("Frame", MainFrame)
-TabFrame.Size = UDim2.new(0, 100, 0, 320)
-TabFrame.Position = UDim2.new(0, 0, 0, 30)
-TabFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+-- 传送功能
+local teleportLabel = Label:create("传送玩家:", 20, 150)
+local playerList = Listbox:create(20, 180, 300, 150)
+playerList:addItem("玩家A")
+playerList:addItem("玩家B")
+local teleportBtn = Button:create("立即传送", 330, 180, 100, 30)
+scrollPanel:addChild(teleportLabel)
+scrollPanel:addChild(playerList)
+scrollPanel:addChild(teleportBtn)
 
-local function makeTab(name, order)
-    local btn = Instance.new("TextButton", TabFrame)
-    btn.Size = UDim2.new(1, 0, 0, 40)
-    btn.Position = UDim2.new(0, 0, 0, (order-1)*40)
-    btn.Text = name
-    btn.TextColor3 = Color3.fromRGB(180,180,180)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 20
-    return btn
-end
-local tab1 = makeTab("公告", 1)
-local tab2 = makeTab("通用", 2)
-local tab3 = makeTab("被遗弃", 3)
+-- 旋转功能
+local rotateBtn = Button:create("旋转", 20, 350, 100, 30)
+local rotateSpeed = Slider:create("旋转速度:", 130, 355, 200, 25, 1, 9000, 1000)
+scrollPanel:addChild(rotateBtn)
+scrollPanel:addChild(rotateSpeed)
 
--- 主内容区域
-local ContentFrame = Instance.new("Frame", MainFrame)
-ContentFrame.Size = UDim2.new(0, 300, 0, 320)
-ContentFrame.Position = UDim2.new(0, 100, 0, 30)
-ContentFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+-- 移动速度
+local speedToggle = Checkbox:create("开启移动速度", 20, 400)
+local speedSlider = Slider:create("移动速度:", 20, 440, 300, 25, 1, 9999999999999, 100)
+speedSlider:setEnabled(false)  -- 默认禁用
+scrollPanel:addChild(speedToggle)
+scrollPanel:addChild(speedSlider)
 
--- 公告页面
-local NoticePage = Instance.new("Frame", ContentFrame)
-NoticePage.Size = UDim2.new(1, 0, 1, 0)
-NoticePage.BackgroundTransparency = 1
-NoticePage.Visible = true
+-- 跳跃高度
+local jumpToggle = Checkbox:create("开启跳跃高度", 20, 490)
+local jumpSlider = Slider:create("跳跃高度:", 20, 530, 300, 25, 1, 999, 100)
+jumpSlider:setEnabled(false)  -- 默认禁用
+scrollPanel:addChild(jumpToggle)
+scrollPanel:addChild(jumpSlider)
 
-local NoticeText = Instance.new("TextLabel", NoticePage)
-NoticeText.Size = UDim2.new(1, -20, 0, 60)
-NoticeText.Position = UDim2.new(0, 10, 0, 40)
-NoticeText.Text = "做脚本19个月随便问\nui:444442555848"
-NoticeText.TextColor3 = Color3.fromRGB(255,255,180)
-NoticeText.Font = Enum.Font.Gotham
-NoticeText.TextSize = 18
-NoticeText.TextWrapped = true
+-- 退出服务器
+local quitBtn = Button:create("退出服务器", 20, 580, 150, 40)
+quitBtn:setBackgroundColor(0xFF5555)
+scrollPanel:addChild(quitBtn)
 
--- 通用页面
-local CommonPage = Instance.new("Frame", ContentFrame)
-CommonPage.Size = UDim2.new(1, 0, 1, 0)
-CommonPage.BackgroundTransparency = 1
-CommonPage.Visible = false
+-- 页面3: 被遗弃功能页
+local abandonedTab = TabPage:create("被遗弃")
+local scrollPanel2 = ScrollPanel:create(0, 0, 460, 600)
 
-local function makeLabel(parent, text, pos)
-    local l = Instance.new("TextLabel", parent)
-    l.Size = UDim2.new(1, -20, 0, 22)
-    l.Position = UDim2.new(0, 10, 0, pos)
-    l.Text = text
-    l.Font = Enum.Font.Gotham
-    l.TextColor3 = Color3.fromRGB(200,200,200)
-    l.TextSize = 16
-    l.BackgroundTransparency = 1
-    l.TextXAlignment = Enum.TextXAlignment.Left
-    return l
+-- 透视幸存者
+local survivorBtn = Checkbox:create("透视幸存者", 20, 20)
+scrollPanel2:addChild(survivorBtn)
+
+-- 透视杀手
+local killerBtn = Checkbox:create("透视杀手(包含脚印)", 20, 60)
+scrollPanel2:addChild(killerBtn)
+
+-- 攻击箱调整
+local attackSlider = Slider:create("攻击箱调整(10-900):", 20, 100, 300, 25, 10, 900, 200)
+scrollPanel2:addChild(attackSlider)
+
+-- 攻击箱追踪
+local trackBtn = Checkbox:create("攻击箱追踪玩家", 20, 140)
+scrollPanel2:addChild(trackBtn)
+
+-- 添加页面到选项卡
+tabControl:addPage(noticeTab)
+tabControl:addPage(generalTab)
+tabControl:addPage(abandonedTab)
+mainWindow:addChild(tabControl)
+
+-- 功能实现逻辑 -----------------------------------
+-- 飞行功能
+function flyBtn:onClick()
+    local speed = flySpeed:getValue()
+    Game.setFlySpeed(speed)
+    print("飞行已启用，速度："..speed)
 end
 
-local flyLabel = makeLabel(CommonPage, "飞行", 10)
-local flyToggle = Instance.new("TextButton", CommonPage)
-flyToggle.Size = UDim2.new(0, 80, 0, 24)
-flyToggle.Position = UDim2.new(0, 200, 0, 10)
-flyToggle.Text = "开/关"
-
-local speedLabel = makeLabel(CommonPage, "调整飞行速度", 40)
-local speedBox = Instance.new("TextBox", CommonPage)
-speedBox.Size = UDim2.new(0, 80, 0, 24)
-speedBox.Position = UDim2.new(0, 200, 0, 40)
-speedBox.Text = "17"
-
-local allflyBtn = Instance.new("TextButton", CommonPage)
-allflyBtn.Size = UDim2.new(1, -20, 0, 24)
-allflyBtn.Position = UDim2.new(0, 10, 0, 70)
-allflyBtn.Text = "甩飞所有玩家"
-
-local seeAllBtn = Instance.new("TextButton", CommonPage)
-seeAllBtn.Size = UDim2.new(1, -20, 0, 24)
-seeAllBtn.Position = UDim2.new(0, 10, 0, 100)
-seeAllBtn.Text = "透视所有玩家"
-
-local jumpLabel = makeLabel(CommonPage, "设置跳跃高度", 130)
-local jumpBox = Instance.new("TextBox", CommonPage)
-jumpBox.Size = UDim2.new(0, 80, 0, 24)
-jumpBox.Position = UDim2.new(0, 200, 0, 130)
-jumpBox.Text = "50"
-
-local luBtn = Instance.new("TextButton", CommonPage)
-luBtn.Size = UDim2.new(1, -20, 0, 24)
-luBtn.Position = UDim2.new(0, 10, 0, 160)
-luBtn.Text = "撸"
-
--- 被遗弃页面
-local AbandonPage = Instance.new("Frame", ContentFrame)
-AbandonPage.Size = UDim2.new(1, 0, 1, 0)
-AbandonPage.BackgroundTransparency = 1
-AbandonPage.Visible = false
-
-local stLabel = makeLabel(AbandonPage, "无限体力", 10)
-local stBtn = Instance.new("TextButton", AbandonPage)
-stBtn.Size = UDim2.new(0, 80, 0, 24)
-stBtn.Position = UDim2.new(0, 200, 0, 10)
-stBtn.Text = "开/关"
-
-local nvLabel = makeLabel(AbandonPage, "夜视", 40)
-local nvBtn = Instance.new("TextButton", AbandonPage)
-nvBtn.Size = UDim2.new(0, 80, 0, 24)
-nvBtn.Position = UDim2.new(0, 200, 0, 40)
-nvBtn.Text = "开/关"
-
-local seeSurBtn = Instance.new("TextButton", AbandonPage)
-seeSurBtn.Size = UDim2.new(1, -20, 0, 24)
-seeSurBtn.Position = UDim2.new(0, 10, 0, 70)
-seeSurBtn.Text = "透视幸存者"
-
-local seeKillBtn = Instance.new("TextButton", AbandonPage)
-seeKillBtn.Size = UDim2.new(1, -20, 0, 24)
-seeKillBtn.Position = UDim2.new(0, 10, 0, 100)
-seeKillBtn.Text = "透视杀手"
-
-local visitorBtn = Instance.new("TextButton", AbandonPage)
-visitorBtn.Size = UDim2.new(1, -20, 0, 24)
-visitorBtn.Position = UDim2.new(0, 10, 0, 130)
-visitorBtn.Text = "访客1337自动防御"
-
-local atkLabel = makeLabel(AbandonPage, "攻击箱调整", 160)
-local atkBox = Instance.new("TextBox", AbandonPage)
-atkBox.Size = UDim2.new(0, 80, 0, 24)
-atkBox.Position = UDim2.new(0, 200, 0, 160)
-atkBox.Text = "0"
-
-local atkTrackBtn = Instance.new("TextButton", AbandonPage)
-atkTrackBtn.Size = UDim2.new(1, -20, 0, 24)
-atkTrackBtn.Position = UDim2.new(0, 10, 0, 190)
-atkTrackBtn.Text = "攻击箱跟踪"
-
--- 页面切换逻辑
-tab1.MouseButton1Click:Connect(function()
-    NoticePage.Visible = true
-    CommonPage.Visible = false
-    AbandonPage.Visible = false
-end)
-tab2.MouseButton1Click:Connect(function()
-    NoticePage.Visible = false
-    CommonPage.Visible = true
-    AbandonPage.Visible = false
-end)
-tab3.MouseButton1Click:Connect(function()
-    NoticePage.Visible = false
-    CommonPage.Visible = false
-    AbandonPage.Visible = true
-end)
-
--- 最小化/隐藏逻辑
-MinBtn.MouseButton1Click:Connect(function()
-    ContentFrame.Visible = not ContentFrame.Visible
-end)
-HideBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-end)
-
--- 全局快捷键（F4显示/隐藏UI）
-UIS.InputBegan:Connect(function(input, gpe)
-    if not gpe and input.KeyCode == Enum.KeyCode.F4 then
-        MainFrame.Visible = not MainFrame.Visible
+-- 传送功能
+function teleportBtn:onClick()
+    local selected = playerList:getSelectedItem()
+    if selected then
+        Game.teleportToPlayer(selected:getText())
+        print("已传送到玩家："..selected:getText())
     end
-end)
+end
 
--- 功能实现（仅示例，具体逻辑需结合实际游戏API）
-flyToggle.MouseButton1Click:Connect(function()
-    -- 切换飞行
-    print("飞行开关，速度：" .. tonumber(speedBox.Text) or 17)
-end)
-allflyBtn.MouseButton1Click:Connect(function()
-    -- 甩飞所有玩家
-    print("甩飞所有玩家")
-end)
-seeAllBtn.MouseButton1Click:Connect(function()
-    -- 透视所有玩家
-    print("透视所有玩家")
-end)
-jumpBox.FocusLost:Connect(function()
-    print("设置跳跃高度："..tonumber(jumpBox.Text) or 50)
-end)
-luBtn.MouseButton1Click:Connect(function()
-    -- 踢出服务器
-    game:GetService("Players").LocalPlayer:Kick("SZ😂")
-end)
+-- 退出服务器
+function quitBtn:onClick()
+    Network.quitServer()
+    print("帮你退出服务器了，要感谢我😍😍😍")
+end
 
-stBtn.MouseButton1Click:Connect(function()
-    print("无限体力 开关")
-end)
-nvBtn.MouseButton1Click:Connect(function()
-    print("夜视 开关")
-end)
-seeSurBtn.MouseButton1Click:Connect(function()
-    print("透视幸存者")
-end)
-seeKillBtn.MouseButton1Click:Connect(function()
-    print("透视杀手")
-end)
-visitorBtn.MouseButton1Click:Connect(function()
-    print("访客1337自动防御")
-end)
-atkBox.FocusLost:Connect(function()
-    print("攻击箱调整："..tonumber(atkBox.Text) or 0)
-end)
-atkTrackBtn.MouseButton1Click:Connect(function()
-    print("攻击箱跟踪")
-end)
+-- 移动速度开关
+function speedToggle:onStateChange(checked)
+    speedSlider:setEnabled(checked)
+end
 
--- 结束
-print("喏脚本UI已加载！F4显示/隐藏")
+-- 跳跃高度开关
+function jumpToggle:onStateChange(checked)
+    jumpSlider:setEnabled(checked)
+end
+
+-- 显示窗口
+mainWindow:show()
