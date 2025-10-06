@@ -17,7 +17,7 @@ local Sound = Instance.new("Sound")
       Sound.Ended:Wait()
       Sound:Destroy()
 
-local Window = OrionLib:MakeWindow({Name = "脚本中心", HidePremium = false, SaveConfig = false, IntroText = "脚本中心", ConfigFolder = "脚本中心"})
+local Window = OrionLib:MakeWindow({Name = "脚本", HidePremium = false, SaveConfig = false, IntroText = "脚本", ConfigFolder = "脚本"})
 
 local Tab = Window:MakeTab({
       Name = "公告",
