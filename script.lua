@@ -1,910 +1,707 @@
-local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/ChinaQY/-/Main/UI"))()
-
-if game.Players.LocalPlayer.Name == "AQ14ABS" or game.Players.LocalPlayer.Name == "edc12363" or game.Players.LocalPlayer.Name == "onygfvjop" or game.Players.LocalPlayer.Name == "ah_kdj3" or game.Players.LocalPlayer.Name == "luoyang100616" or game.Players.LocalPlayer.Name == "hdjdje675" or game.Players.LocalPlayer.Name == "qazwsxuruu" or game.Players.LocalPlayer.Name == "ADCZ4xx" or game.Players.LocalPlayer.Name == "TM5418888" or game.Players.LocalPlayer.Name == "codm656558" then
-    game.Players.LocalPlayer:Kick("Exploiting😂")
-else
-
-OrionLib:MakeNotification({
-      Name = "加白名单没😡",
-      Content = "Hello",
-      Time = 3.5 })
-
-local Sound = Instance.new("Sound")
-      Sound.SoundId = "rbxassetid://4590662766"
-      Sound.Parent = game:GetService("SoundService")
-      Sound.Volume = 5
-      Sound:Play()
-      Sound.Ended:Wait()
-      Sound:Destroy()
-
-local Window = OrionLib:MakeWindow({Name = "脚本", HidePremium = false, SaveConfig = false, IntroText = "脚本", ConfigFolder = "脚本"})
-
-local Tab = Window:MakeTab({
-      Name = "公告",
-      Icon = "rbxassetid://14250466898",
-      PremiumOnly = false
-})
-
-Tab:AddParagraph("作者","小车")
-Tab:AddLabel("此脚本为缝合")
-Tab:AddLabel("此脚本完全免费禁止倒卖")
-Tab:AddLabel("QQ群 : 封号了")
-Tab:AddLabel("DC群组 : 是不是想偷源码呀😂")
-
-local Tab = Window:MakeTab({
-      Name = "通用",
-      Icon = "rbxassetid://14250466898",
-      PremiumOnly = false
-})
-
-Tab:AddButton({
-    Name = "IY Dex修复版",
-    Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-end})
-
-Tab:AddButton({
-    Name = "普京比例",
-    Callback = function()
-getgenv().Resolution = {
-    [".gg/scripters"] = 0.65
-}
-
-local Camera = workspace.CurrentCamera
-if getgenv().gg_scripters == nil then
-    game:GetService("RunService").RenderStepped:Connect(
-        function()
-            Camera.CFrame = Camera.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, getgenv().Resolution[".gg/scripters"], 0, 0, 0, 1)
+local lib = {RainbowColorValue = 0, HueSelectionPosition = 0}
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local PresetColor = Color3.fromRGB(0, 255, 0)
+local CloseBind = Enum.KeyCode.RightControl
+local ui = Instance.new("ScreenGui")
+ui.Name = "ui"
+ui.Parent = game.CoreGui
+ui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+coroutine.wrap(
+    function()
+        while wait() do
+            lib.RainbowColorValue = lib.RainbowColorValue + 1 / 255
+            lib.HueSelectionPosition = lib.HueSelectionPosition + 1
+            if lib.RainbowColorValue >= 1 then
+                lib.RainbowColorValue = 0
+            end
+            if lib.HueSelectionPosition == 80 then
+                lib.HueSelectionPosition = 0
+            end
+        end
+    end
+)()
+local function MakeDraggable(topbarobject, object)
+    local Dragging = nil
+    local DragInput = nil
+    local DragStart = nil
+    local StartPosition = nil
+    local function Update(input)
+        local Delta = input.Position - DragStart
+        local pos =
+            UDim2.new(
+            StartPosition.X.Scale,
+            StartPosition.X.Offset + Delta.X,
+            StartPosition.Y.Scale,
+            StartPosition.Y.Offset + Delta.Y
+        )
+        object.Position = pos
+    end
+    topbarobject.InputBegan:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                Dragging = true
+                DragStart = input.Position
+                StartPosition = object.Position
+                input.Changed:Connect(
+                    function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            Dragging = false
+                        end
+                    end
+                )
+            end
+        end
+    )
+    topbarobject.InputChanged:Connect(
+        function(input)
+            if
+                input.UserInputType == Enum.UserInputType.MouseMovement or
+                    input.UserInputType == Enum.UserInputType.Touch
+             then
+                DragInput = input
+            end
+        end
+    )
+    UserInputService.InputChanged:Connect(
+        function(input)
+            if input == DragInput and Dragging then
+                Update(input)
+            end
         end
     )
 end
-getgenv().gg_scripters = "g5s"
-end})
-
-Tab:AddButton({
-    Name = "恢复比例",
-    Callback = function()
-getgenv().Resolution = {
-    [".gg/scripters"] = 1
-}
-
-local Camera = workspace.CurrentCamera
-if getgenv().gg_scripters == nil then
-    game:GetService("RunService").RenderStepped:Connect(
-        function()
-            Camera.CFrame = Camera.CFrame * CFrame.new(0, 0, 0, 1, 0, 0, 0, getgenv().Resolution[".gg/scripters"], 0, 0, 0, 1)
+function lib:Window(text, preset, closebind)
+    CloseBind = closebind or Enum.KeyCode.RightControl
+    PresetColor = preset or Color3.fromRGB(44, 120, 224)
+    fs = false
+    local Main = Instance.new("ImageLabel")
+    local TabHold = Instance.new("Frame")
+    local TabHoldLayout = Instance.new("UIListLayout")
+    local Title = Instance.new("TextLabel")
+    local TabFolder = Instance.new("Folder")
+    local DragFrame = Instance.new("Frame")
+    local DTTransparency = 0.75
+    Main.Name = "Main"
+    Main.Parent = ui
+    Main.AnchorPoint = Vector2.new(0.5, 0.5)
+    Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Main.BorderSizePixel = 0
+    Main.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Main.Size = UDim2.new(0, 0, 0, 0)
+    Main.ClipsDescendants = true
+    Main.Visible = true
+    Main.Image = "rbxassetid://132190838922049"--脚本背景图
+    TabHold.Name = "TabHold"
+    TabHold.Parent = Main
+    TabHold.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TabHold.BackgroundTransparency = 1.000
+    TabHold.Position = UDim2.new(0.0339285731, 0, 0.147335425, 0)
+    TabHold.Size = UDim2.new(0, 107, 0, 254)
+    
+    
+    TabHoldLayout.Name = "TabHoldLayout"
+    TabHoldLayout.Parent = TabHold
+    TabHoldLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    TabHoldLayout.Padding = UDim.new(0, 11)
+    Title.Name = "Title"
+    Title.Parent = Main
+    Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Title.BackgroundTransparency = 1.000
+    Title.Position = UDim2.new(0.0339285731, 0, 0.0564263314, 0)
+    Title.Size = UDim2.new(0, 200, 0, 23)
+    Title.Font = Enum.Font.GothamSemibold
+    Title.Text = text
+    Title.TextColor3 = Color3.fromRGB(68, 68, 68)
+    Title.TextSize = 12.000
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    DragFrame.Name = "DragFrame"
+    DragFrame.Parent = Main
+    DragFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    DragFrame.BackgroundTransparency = 1.000
+    DragFrame.Size = UDim2.new(0, 560, 0, 41)
+    Main:TweenSize(UDim2.new(0, 560, 0, 319), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
+    MakeDraggable(DragFrame, Main)
+    local uitoggled = false
+    UserInputService.InputBegan:Connect(
+        function(io, p)
+            if io.KeyCode == CloseBind then
+                if uitoggled == false then
+                    uitoggled = true
+                
+                    Main:TweenSize(
+                        UDim2.new(0, 0, 0, 0), 
+                        Enum.EasingDirection.Out, 
+                        Enum.EasingStyle.Quart, 
+                        .6, 
+                        true, 
+                        function()
+                            ui.Enabled = false
+                        end
+                    )
+                    
+                else
+                    uitoggled = false
+                    ui.Enabled = true
+                
+                    Main:TweenSize(
+                        UDim2.new(0, 560, 0, 319),
+                        Enum.EasingDirection.Out,
+                        Enum.EasingStyle.Quart,
+                        .6,
+                        true
+                    )
+                end
+            end
         end
     )
-end
-getgenv().gg_scripters = "g5s"
-end})
-
-Tab:AddButton({
-    Name = "锁定人物视角",
-    Callback = function()
-local ShiftlockStarterGui = Instance.new("ScreenGui")
-local ImageButton = Instance.new("ImageButton")
-ShiftlockStarterGui.Name = "Shiftlock (StarterGui)"
-ShiftlockStarterGui.Parent = game.CoreGui
-ShiftlockStarterGui.ZIndexBehavior =  Enum.ZIndexBehavior.Sibling
-ShiftlockStarterGui.ResetOnSpawn = false
-
-ImageButton.Parent = ShiftlockStarterGui
-ImageButton.Active = true
-ImageButton.Draggable = true
-ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-ImageButton.BackgroundTransparency = 1.000
-ImageButton.Position = UDim2.new(0.921914339, 0, 0.552375436, 0)
-ImageButton.Size = UDim2.new(0.0636147112, 0, 0.0661305636, 0)
-ImageButton.SizeConstraint = Enum.SizeConstraint.RelativeXX
-ImageButton.Image = "http://www.roblox.com/asset/?id=182223762"
-local function TLQOYN_fake_script()
-    local script = Instance.new("LocalScript", ImageButton)
-
-    local MobileCameraFramework = {}
-    local players = game:GetService("Players")
-    local runservice = game:GetService("RunService")
-    local CAS = game:GetService("ContextActionService")
-    local player = players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local root = character:WaitForChild("HumanoidRootPart")
-    local humanoid = character.Humanoid
-    local camera = workspace.CurrentCamera
-    local button = script.Parent
-    uis = game:GetService("UserInputService")
-    ismobile = uis.TouchEnabled
-    button.Visible = ismobile
-    
-    local states = {
-        OFF = "rbxasset://textures/ui/mouseLock_off@2x.png",
-        ON = "rbxasset://textures/ui/mouseLock_on@2x.png"
-    }
-    local MAX_LENGTH = 900000
-    local active = false
-    local ENABLED_OFFSET = CFrame.new(1.7, 0, 0)
-    local DISABLED_OFFSET = CFrame.new(-1.7, 0, 0)
-local rootPos = Vector3.new(0,0,0)
-local function UpdatePos()
-if player.Character and player.Character:FindFirstChildOfClass"Humanoid" and player.Character:FindFirstChildOfClass"Humanoid".RootPart then
-rootPos = player.Character:FindFirstChildOfClass"Humanoid".RootPart.Position
-end
-end
-    local function UpdateImage(STATE)
-        button.Image = states[STATE]
+    TabFolder.Name = "TabFolder"
+    TabFolder.Parent = Main
+    function lib:ChangePresetColor(toch)
+        PresetColor = toch
     end
-    local function UpdateAutoRotate(BOOL)
-if player.Character and player.Character:FindFirstChildOfClass"Humanoid" then
-player.Character:FindFirstChildOfClass"Humanoid".AutoRotate = BOOL
-end
-end
-    local function GetUpdatedCameraCFrame()
-if game:GetService"Workspace".CurrentCamera then
-return CFrame.new(rootPos, Vector3.new(game:GetService"Workspace".CurrentCamera.CFrame.LookVector.X * MAX_LENGTH, rootPos.Y, game:GetService"Workspace".CurrentCamera.CFrame.LookVector.Z * MAX_LENGTH))
-end
-end
-    local function EnableShiftlock()
-UpdatePos()
-        UpdateAutoRotate(false)
-        UpdateImage("ON")
-if player.Character and player.Character:FindFirstChildOfClass"Humanoid" and player.Character:FindFirstChildOfClass"Humanoid".RootPart then
-player.Character:FindFirstChildOfClass"Humanoid".RootPart.CFrame = GetUpdatedCameraCFrame()
-end
-if game:GetService"Workspace".CurrentCamera then
-game:GetService"Workspace".CurrentCamera.CFrame = camera.CFrame * ENABLED_OFFSET
-end
-    end
-    local function DisableShiftlock()
-UpdatePos()
-        UpdateAutoRotate(true)
-        UpdateImage("OFF")
-        if game:GetService"Workspace".CurrentCamera then
-game:GetService"Workspace".CurrentCamera.CFrame = camera.CFrame * DISABLED_OFFSET
-end
-        pcall(function()
-            active:Disconnect()
-            active = nil
-        end)
-    end
-    UpdateImage("OFF")
-    active = false
-    function ShiftLock()
-        if not active then
-            active = runservice.RenderStepped:Connect(function()
-                EnableShiftlock()
-            end)
-        else
-            DisableShiftlock()
-        end
-    end
-    local ShiftLockButton = CAS:BindAction("ShiftLOCK", ShiftLock, false, "On")
-    CAS:SetPosition("ShiftLOCK", UDim2.new(0.8, 0, 0.8, 0))
-    button.MouseButton1Click:Connect(function()
-        if not active then
-            active = runservice.RenderStepped:Connect(function()
-                EnableShiftlock()
-            end)
-        else
-            DisableShiftlock()
-        end
-    end)
-    return MobileCameraFramework
-    
-end
-coroutine.wrap(TLQOYN_fake_script)()
-local function OMQRQRC_fake_script()
-    local script = Instance.new("LocalScript", ShiftlockStarterGui)
-
-    local Players = game:GetService("Players")
-    local UserInputService = game:GetService("UserInputService")
-    local Settings = UserSettings()
-    local GameSettings = Settings.GameSettings
-    local ShiftLockController = {}
-    while not Players.LocalPlayer do
-        wait()
-    end
-    local LocalPlayer = Players.LocalPlayer
-    local Mouse = LocalPlayer:GetMouse()
-    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-    local ScreenGui, ShiftLockIcon, InputCn
-    local IsShiftLockMode = true
-    local IsShiftLocked = true
-    local IsActionBound = false
-    local IsInFirstPerson = false
-    ShiftLockController.OnShiftLockToggled = Instance.new("BindableEvent")
-    local function isShiftLockMode()
-        return LocalPlayer.DevEnableMouseLock and GameSettings.ControlMode == Enum.ControlMode.MouseLockSwitch and LocalPlayer.DevComputerMovementMode ~= Enum.DevComputerMovementMode.ClickToMove and GameSettings.ComputerMovementMode ~= Enum.ComputerMovementMode.ClickToMove and LocalPlayer.DevComputerMovementMode ~= Enum.DevComputerMovementMode.Scriptable
-    end
-    if not UserInputService.TouchEnabled then
-        IsShiftLockMode = isShiftLockMode()
-    end
-    local function onShiftLockToggled()
-        IsShiftLocked = not IsShiftLocked
-        ShiftLockController.OnShiftLockToggled:Fire()
-    end
-    local initialize = function()
-        print("enabled")
-    end
-    function ShiftLockController:IsShiftLocked()
-        return IsShiftLockMode and IsShiftLocked
-    end
-    function ShiftLockController:SetIsInFirstPerson(isInFirstPerson)
-        IsInFirstPerson = isInFirstPerson
-    end
-    local function mouseLockSwitchFunc(actionName, inputState, inputObject)
-        if IsShiftLockMode then
-            onShiftLockToggled()
-        end
-    end
-    local function disableShiftLock()
-        if ScreenGui then
-            ScreenGui.Parent = nil
-        end
-        IsShiftLockMode = false
-        Mouse.Icon = ""
-        if InputCn then
-            InputCn:disconnect()
-            InputCn = nil
-        end
-        IsActionBound = false
-        ShiftLockController.OnShiftLockToggled:Fire()
-    end
-    local onShiftInputBegan = function(inputObject, isProcessed)
-        if isProcessed then
-            return
-        end
-        if inputObject.UserInputType ~= Enum.UserInputType.Keyboard or inputObject.KeyCode == Enum.KeyCode.LeftShift or inputObject.KeyCode == Enum.KeyCode.RightShift then
-        end
-    end
-    local function enableShiftLock()
-        IsShiftLockMode = isShiftLockMode()
-        if IsShiftLockMode then
-            if ScreenGui then
-                ScreenGui.Parent = PlayerGui
+    function lib:Notification(texttitle, textdesc, textbtn)
+        local NotificationHold = Instance.new("TextButton")
+        local NotificationFrame = Instance.new("Frame")
+        local OkayBtn = Instance.new("TextButton")
+        local OkayBtnCorner = Instance.new("UICorner")
+        local OkayBtnTitle = Instance.new("TextLabel")
+        local NotificationTitle = Instance.new("TextLabel")
+        local NotificationDesc = Instance.new("TextLabel")
+        NotificationHold.Name = "NotificationHold"
+        NotificationHold.Parent = Main
+        NotificationHold.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        NotificationHold.BackgroundTransparency = 1.000
+        NotificationHold.BorderSizePixel = 0
+        NotificationHold.Size = UDim2.new(0, 560, 0, 319)
+        NotificationHold.AutoButtonColor = false
+        NotificationHold.Font = Enum.Font.SourceSans
+        NotificationHold.Text = ""
+        NotificationHold.TextColor3 = Color3.fromRGB(0, 0, 0)
+        NotificationHold.TextSize = 14.000
+        TweenService:Create(
+            NotificationHold,
+            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.7}
+        ):Play()
+        wait(0.4)
+        NotificationFrame.Name = "NotificationFrame"
+        NotificationFrame.Parent = NotificationHold
+        NotificationFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+        NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        NotificationFrame.BorderSizePixel = 0
+        NotificationFrame.ClipsDescendants = true
+        NotificationFrame.Position = UDim2.new(0.5, 0, 0.498432577, 0)
+        NotificationFrame:TweenSize(
+            UDim2.new(0, 164, 0, 193),
+            Enum.EasingDirection.Out,
+            Enum.EasingStyle.Quart,
+            .6,
+            true
+        )
+        OkayBtn.Name = "OkayBtn"
+        OkayBtn.Parent = NotificationFrame
+        OkayBtn.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+        OkayBtn.Position = UDim2.new(0.0609756112, 0, 0.720207274, 0)
+        OkayBtn.Size = UDim2.new(0, 144, 0, 42)
+        OkayBtn.AutoButtonColor = false
+        OkayBtn.Font = Enum.Font.SourceSans
+        OkayBtn.Text = ""
+        OkayBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+        OkayBtn.TextSize = 14.000
+        OkayBtnCorner.CornerRadius = UDim.new(0, 5)
+        OkayBtnCorner.Name = "OkayBtnCorner"
+        OkayBtnCorner.Parent = OkayBtn
+        OkayBtnTitle.Name = "OkayBtnTitle"
+        OkayBtnTitle.Parent = OkayBtn
+        OkayBtnTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        OkayBtnTitle.BackgroundTransparency = 1.000
+        OkayBtnTitle.Position = UDim2.new(0.0763888881, 0, 0, 0)
+        OkayBtnTitle.Size = UDim2.new(0, 181, 0, 42)
+        OkayBtnTitle.Font = Enum.Font.Gotham
+        OkayBtnTitle.Text = textbtn
+        OkayBtnTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        OkayBtnTitle.TextSize = 14.000
+        OkayBtnTitle.TextXAlignment = Enum.TextXAlignment.Left
+        NotificationTitle.Name = "NotificationTitle"
+        NotificationTitle.Parent = NotificationFrame
+        NotificationTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        NotificationTitle.BackgroundTransparency = 1.000
+        NotificationTitle.Position = UDim2.new(0.0670731738, 0, 0.0829015523, 0)
+        NotificationTitle.Size = UDim2.new(0, 143, 0, 26)
+        NotificationTitle.Font = Enum.Font.Gotham
+        NotificationTitle.Text = texttitle
+        NotificationTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        NotificationTitle.TextSize = 18.000
+        NotificationTitle.TextXAlignment = Enum.TextXAlignment.Left
+        NotificationDesc.Name = "NotificationDesc"
+        NotificationDesc.Parent = NotificationFrame
+        NotificationDesc.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        NotificationDesc.BackgroundTransparency = 1.000
+        NotificationDesc.Position = UDim2.new(0.0670000017, 0, 0.218999997, 0)
+        NotificationDesc.Size = UDim2.new(0, 143, 0, 91)
+        NotificationDesc.Font = Enum.Font.Gotham
+        NotificationDesc.Text = textdesc
+        NotificationDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
+        NotificationDesc.TextSize = 15.000
+        NotificationDesc.TextWrapped = true
+        NotificationDesc.TextXAlignment = Enum.TextXAlignment.Left
+        NotificationDesc.TextYAlignment = Enum.TextYAlignment.Top
+        OkayBtn.MouseEnter:Connect(
+            function()
+                TweenService:Create(
+                    OkayBtn,
+                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
+                ):Play()
             end
-            if IsShiftLocked then
-                ShiftLockController.OnShiftLockToggled:Fire()
+        )
+        OkayBtn.MouseLeave:Connect(
+            function()
+                TweenService:Create(
+                    OkayBtn,
+                    TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
+                ):Play()
             end
-            if not IsActionBound then
-                InputCn = UserInputService.InputBegan:connect(onShiftInputBegan)
-                IsActionBound = true
+        )
+        OkayBtn.MouseButton1Click:Connect(
+            function()
+                NotificationFrame:TweenSize(
+                    UDim2.new(0, 0, 0, 0),
+                    Enum.EasingDirection.Out,
+                    Enum.EasingStyle.Quart,
+                    .6,
+                    true
+                )
+                wait(0.4)
+                TweenService:Create(
+                    NotificationHold,
+                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundTransparency = 1}
+                ):Play()
+                wait(.3)
+                NotificationHold:Destroy()
             end
-        end
+        )
     end
-    GameSettings.Changed:connect(function(property)
-        if property == "ControlMode" then
-            if GameSettings.ControlMode == Enum.ControlMode.MouseLockSwitch then
-                enableShiftLock()
-            else
-                disableShiftLock()
-            end
-        elseif property == "ComputerMovementMode" then
-            if GameSettings.ComputerMovementMode == Enum.ComputerMovementMode.ClickToMove then
-                disableShiftLock()
-            else
-                enableShiftLock()
-            end
-        end
-    end)
-    LocalPlayer.Changed:connect(function(property)
-        if property == "DevEnableMouseLock" then
-            if LocalPlayer.DevEnableMouseLock then
-                enableShiftLock()
-            else
-                disableShiftLock()
-            end
-        elseif property == "DevComputerMovementMode" then
-            if LocalPlayer.DevComputerMovementMode == Enum.DevComputerMovementMode.ClickToMove or LocalPlayer.DevComputerMovementMode == Enum.DevComputerMovementMode.Scriptable then
-                disableShiftLock()
-            else
-                enableShiftLock()
-            end
-        end
-    end)
-    LocalPlayer.CharacterAdded:connect(function(character)
-        if not UserInputService.TouchEnabled then
-            initialize()
-        end
-    end)
-    if not UserInputService.TouchEnabled then
-        initialize()
-        if isShiftLockMode() then
-            InputCn = UserInputService.InputBegan:connect(onShiftInputBegan)
-            IsActionBound = true
-        end
-    end
-    enableShiftLock()
-    return ShiftLockController
-    
-end
-coroutine.wrap(OMQRQRC_fake_script)()
-end})
 
-Tab:AddButton({
-    Name = "IY指令",
-    Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-end})
-
-Tab:AddButton({
-    Name = "IY指令 ( 中文版 )",
-    Callback = function()
-loadstring(game:HttpGet(utf8.char((function() return table.unpack({104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,87,97,110,103,122,104,101,104,97,111,104,47,102,108,121,45,97,119,97,121,47,109,97,105,110,47,37,69,54,37,56,67,37,56,55,37,69,52,37,66,66,37,56,65,37,69,52,37,66,56,37,65,68,37,69,54,37,57,54,37,56,55,46,116,120,116})end)())))()
-end})
-
-Tab:AddButton({
-    Name = "撸R6",
-    Callback = function()
-loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
-end})
-
-Tab:AddButton({
-    Name = "撸R15",
-    Callback = function()
-loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
-end})
-
-Tab:AddButton({
-    Name = "自瞄 ( 脑壳 )",
-    Callback = function()
-getgenv().Camlock_Settings = {
-    Prediction = 0,
-    AimPart = "Head",
-    AutoPrediction = false,
-    Notification = true,
-    Button = true,
-    AntiGroundShots = false,
-    UnderGroundResolver = false,
-    Version = "2.5.1",
-    Credits = "space_0999",
-    DiscordServer = "discord.gg/SKhamGzTdn"
-}
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/elxocasXD/Trip-Hub/main/Scripts/Cam%20Lock.lua"))()
-end})
-
-Tab:AddButton({
-    Name = "自瞄 ( 身上 )",
-    Callback = function()
-getgenv().Camlock_Settings = {
-    Prediction = 0,
-    AimPart = "HumanoidRootPart",
-    AutoPrediction = false,
-    Notification = true,
-    Button = true,
-    AntiGroundShots = false,
-    UnderGroundResolver = false,
-    Version = "2.5.1",
-    Credits = "space_0999",
-    DiscordServer = "discord.gg/SKhamGzTdn"
-}
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/elxocasXD/Trip-Hub/main/Scripts/Cam%20Lock.lua"))()
-end})
-
-Tab:AddButton({
-    Name = "自瞄锁头老版本",
-    Callback = function()
-local fov = 50
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local Cam = game.Workspace.CurrentCamera
-
-local FOVring = Drawing.new("Circle")
-FOVring.Visible = true
-FOVring.Thickness = 2
-FOVring.Color = Color3.fromRGB(0, 0, 0)
-FOVring.Filled = false
-FOVring.Radius = fov
-FOVring.Position = Cam.ViewportSize / 2
-
-local function updateDrawings()
-    local camViewportSize = Cam.ViewportSize
-    FOVring.Position = camViewportSize / 2
-end
-
-local function onKeyDown(input)
-    if input.KeyCode == Enum.KeyCode.Delete then
-        RunService:UnbindFromRenderStep("FOVUpdate")
-        FOVring:Remove()
-    end
-end
-
-UserInputService.InputBegan:Connect(onKeyDown)
-
-local function lookAt(target)
-    local lookVector = (target - Cam.CFrame.Position).unit
-    local newCFrame = CFrame.new(Cam.CFrame.Position, Cam.CFrame.Position + lookVector)
-    Cam.CFrame = newCFrame
-end
-
-local function getClosestPlayerInFOV(trg_part)
-    local nearest = nil
-    local last = math.huge
-    local playerMousePos = Cam.ViewportSize / 2
-
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= Players.LocalPlayer then
-            local part = player.Character and player.Character:FindFirstChild(trg_part)
-            if part then
-                local ePos, isVisible = Cam:WorldToViewportPoint(part.Position)
-                local distance = (Vector2.new(ePos.x, ePos.y) - playerMousePos).Magnitude
-
-                if distance < last and isVisible and distance < fov then
-                    last = distance
-                    nearest = player
+    local tabhold = {}
+    function tabhold:Tab(text)
+        local TabBtn = Instance.new("TextButton")
+        local TabTitle = Instance.new("TextLabel")
+        local TabBtnIndicator = Instance.new("Frame")
+        local TabBtnIndicatorCorner = Instance.new("UICorner")
+        TabBtn.Name = "TabBtn"
+        TabBtn.Parent = TabHold
+        TabBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        TabBtn.BackgroundTransparency = 1.000
+        TabBtn.Size = UDim2.new(0, 107, 0, 21)
+        TabBtn.Font = Enum.Font.SourceSans
+        TabBtn.Text = ""
+        TabBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+        TabBtn.TextSize = 14.000
+        TabTitle.Name = "TabTitle"
+        TabTitle.Parent = TabBtn
+        TabTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        TabTitle.BackgroundTransparency = 1.000
+        TabTitle.Size = UDim2.new(0, 107, 0, 21)
+        TabTitle.Font = Enum.Font.Gotham
+        TabTitle.Text = text
+        TabTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+        TabTitle.TextSize = 14.000
+        TabTitle.TextXAlignment = Enum.TextXAlignment.Left
+        TabBtnIndicator.Name = "TabBtnIndicator"
+        TabBtnIndicator.Parent = TabBtn
+        TabBtnIndicator.BackgroundColor3 = PresetColor
+        TabBtnIndicator.BorderSizePixel = 0
+        TabBtnIndicator.Position = UDim2.new(0, 0, 1, 0)
+        TabBtnIndicator.Size = UDim2.new(0, 0, 0, 2)
+        TabBtnIndicatorCorner.Name = "TabBtnIndicatorCorner"
+        TabBtnIndicatorCorner.Parent = TabBtnIndicator
+        coroutine.wrap(
+            function()
+                while wait() do
+                    TabBtnIndicator.BackgroundColor3 = PresetColor
                 end
             end
+        )()
+        local Tab = Instance.new("ScrollingFrame")
+        local TabLayout = Instance.new("UIListLayout")
+
+        Tab.Name = "Tab"
+        Tab.Parent = TabFolder
+        Tab.Active = true
+        Tab.BackgroundColor3 = Color3.fromRGB(139, 0, 255)
+        Tab.BackgroundTransparency = 1.000
+        Tab.BorderSizePixel = 0
+        Tab.Position = UDim2.new(0.31400001, 0, 0.147, 0)
+        Tab.Size = UDim2.new(0, 373, 0, 254)
+        Tab.CanvasSize = UDim2.new(0, 0, 0, 0)
+        Tab.ScrollBarThickness = 3
+        Tab.Visible = false
+
+        TabLayout.Name = "TabLayout"
+        TabLayout.Parent = Tab
+        TabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        TabLayout.Padding = UDim.new(0, 6)
+
+        if fs == false then
+            fs = true
+            TabBtnIndicator.Size = UDim2.new(0, 13, 0, 2)
+            TabTitle.TextColor3 = Color3.fromRGB(139, 0, 255)
+            Tab.Visible = true
         end
-    end
 
-    return nearest
-end
-
-RunService.RenderStepped:Connect(function()
-    updateDrawings()
-    local closest = getClosestPlayerInFOV("Head")
-    if closest and closest.Character:FindFirstChild("Head") then
-        lookAt(closest.Character.Head.Position)
-    end
-end)
-end})
-
-Tab:AddButton({
-    Name = "自瞄锁头老版本 ( 大范围 )",
-    Callback = function()
-local fov = 100
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local Cam = game.Workspace.CurrentCamera
-
-local FOVring = Drawing.new("Circle")
-FOVring.Visible = true
-FOVring.Thickness = 2
-FOVring.Color = Color3.fromRGB(0, 0, 0)
-FOVring.Filled = false
-FOVring.Radius = fov
-FOVring.Position = Cam.ViewportSize / 2
-
-local function updateDrawings()
-    local camViewportSize = Cam.ViewportSize
-    FOVring.Position = camViewportSize / 2
-end
-
-local function onKeyDown(input)
-    if input.KeyCode == Enum.KeyCode.Delete then
-        RunService:UnbindFromRenderStep("FOVUpdate")
-        FOVring:Remove()
-    end
-end
-
-UserInputService.InputBegan:Connect(onKeyDown)
-
-local function lookAt(target)
-    local lookVector = (target - Cam.CFrame.Position).unit
-    local newCFrame = CFrame.new(Cam.CFrame.Position, Cam.CFrame.Position + lookVector)
-    Cam.CFrame = newCFrame
-end
-
-local function getClosestPlayerInFOV(trg_part)
-    local nearest = nil
-    local last = math.huge
-    local playerMousePos = Cam.ViewportSize / 2
-
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= Players.LocalPlayer then
-            local part = player.Character and player.Character:FindFirstChild(trg_part)
-            if part then
-                local ePos, isVisible = Cam:WorldToViewportPoint(part.Position)
-                local distance = (Vector2.new(ePos.x, ePos.y) - playerMousePos).Magnitude
-
-                if distance < last and isVisible and distance < fov then
-                    last = distance
-                    nearest = player
+        TabBtn.MouseButton1Click:Connect(
+            function()
+                for i, v in next, TabFolder:GetChildren() do
+                    if v.Name == "Tab" then
+                        v.Visible = false
+                    end
+                    Tab.Visible = true
+                end
+                for i, v in next, TabHold:GetChildren() do
+                    if v.Name == "TabBtn" then
+                        v.TabBtnIndicator:TweenSize(
+                            UDim2.new(0, 0, 0, 2),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                        TabBtnIndicator:TweenSize(
+                            UDim2.new(0, 13, 0, 2),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                        TweenService:Create(
+                            v.TabTitle,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {TextColor3 = Color3.fromRGB(150, 150, 150)}
+                        ):Play()
+                        TweenService:Create(
+                            TabTitle,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {TextColor3 = Color3.fromRGB(139, 0, 255)}
+                        ):Play()
+                    end
                 end
             end
-        end
-    end
+        )
+        local tabcontent = {}
+        function tabcontent:Button(text, callback)
+            local Button = Instance.new("TextButton")
+            local ButtonCorner = Instance.new("UICorner")
+            local ButtonTitle = Instance.new("TextLabel")
 
-    return nearest
-end
+            Button.Name = "Button"
+            Button.Parent = Tab
+            Button.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+            Button.Size = UDim2.new(0, 363, 0, 42)
+            Button.AutoButtonColor = false
+            Button.Font = Enum.Font.SourceSans
+            Button.Text = ""
+            Button.TextColor3 = Color3.fromRGB(0, 0, 0)
+            Button.TextSize = 14.000
+            Button.BackgroundTransparency = 0.6
 
-RunService.RenderStepped:Connect(function()
-    updateDrawings()
-    local closest = getClosestPlayerInFOV("Head")
-    if closest and closest.Character:FindFirstChild("Head") then
-        lookAt(closest.Character.Head.Position)
-    end
-end)
-end})
+            ButtonCorner.CornerRadius = UDim.new(0, 5)
+            ButtonCorner.Name = "ButtonCorner"
+            ButtonCorner.Parent = Button
 
-Tab:AddButton({
-    Name = "自瞄锁头 ( 斩念 )",
-    Callback = function()
-local fov = 100
-local smoothness = 10
-local crosshairDistance = 5
+            ButtonTitle.Name = "ButtonTitle"
+            ButtonTitle.Parent = Button
+            ButtonTitle.BackgroundColor3 = Color3.fromRGB(139, 0, 255)
+            ButtonTitle.BackgroundTransparency = 1.000
+            ButtonTitle.Position = UDim2.new(0.0358126722, 0, 0, 0)
+            ButtonTitle.Size = UDim2.new(0, 187, 0, 42)
+            ButtonTitle.Font = Enum.Font.Gotham
+            ButtonTitle.Text = text
+            ButtonTitle.TextColor3 = Color3.fromRGB(139, 0, 255)
+            ButtonTitle.TextSize = 14.000
+            ButtonTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local Cam = game.Workspace.CurrentCamera
-
-local FOVring = Drawing.new("Circle")
-FOVring.Visible = true
-FOVring.Thickness = 2
-FOVring.Color = Color3.fromRGB(0, 255, 0)
-FOVring.Filled = false
-FOVring.Radius = fov
-FOVring.Position = Cam.ViewportSize / 2
-
-local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
-
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "FovAdjustGui"
-ScreenGui.Parent = PlayerGui
-
-local Frame = Instance.new("Frame")
-Frame.Name = "MainFrame"
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.BorderColor3 = Color3.fromRGB(128, 0, 128)
-Frame.BorderSizePixel = 2
-Frame.Position = UDim2.new(0.3, 0, 0.3, 0)
-Frame.Size = UDim2.new(0.4, 0, 0.4, 0)
-Frame.Active = true
-Frame.Draggable = true
-Frame.Parent = ScreenGui
-
-local MinimizeButton = Instance.new("TextButton")
-MinimizeButton.Name = "MinimizeButton"
-MinimizeButton.Text = "-"
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-MinimizeButton.Position = UDim2.new(0.9, 0, 0, 0)
-MinimizeButton.Size = UDim2.new(0.1, 0, 0.1, 0)
-MinimizeButton.Parent = Frame
-
-local isMinimized = false
-
-MinimizeButton.MouseButton1Click:Connect(function()
-    isMinimized = not isMinimized
-    if isMinimized then
-        Frame:TweenSize(UDim2.new(0.1, 0, 0.1, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
-        MinimizeButton.Text = "+"
-    else
-        Frame:TweenSize(UDim2.new(0.4, 0, 0.4, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
-        MinimizeButton.Text = "-"
-    end
-end)
-
-local FovLabel = Instance.new("TextLabel")
-FovLabel.Name = "FovLabel"
-FovLabel.Text = "自瞄范围"
-FovLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FovLabel.BackgroundTransparency = 1
-FovLabel.Position = UDim2.new(0.1, 0, 0.1, 0)
-FovLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-FovLabel.Parent = Frame
-
-local FovSlider = Instance.new("TextBox")
-FovSlider.Name = "FovSlider"
-FovSlider.Text = tostring(fov)
-FovSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
-FovSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-FovSlider.Position = UDim2.new(0.1, 0, 0.3, 0)
-FovSlider.Size = UDim2.new(0.8, 0, 0.2, 0)
-FovSlider.Parent = Frame
-
-local SmoothnessLabel = Instance.new("TextLabel")
-SmoothnessLabel.Name = "SmoothnessLabel"
-SmoothnessLabel.Text = "自瞄平滑度"
-SmoothnessLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-SmoothnessLabel.BackgroundTransparency = 1
-SmoothnessLabel.Position = UDim2.new(0.1, 0, 0.5, 0)
-SmoothnessLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-SmoothnessLabel.Parent = Frame
-
-local SmoothnessSlider = Instance.new("TextBox")
-SmoothnessSlider.Name = "SmoothnessSlider"
-SmoothnessSlider.Text = tostring(smoothness)
-SmoothnessSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
-SmoothnessSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-SmoothnessSlider.Position = UDim2.new(0.1, 0, 0.7, 0)
-SmoothnessSlider.Size = UDim2.new(0.8, 0, 0.2, 0)
-SmoothnessSlider.Parent = Frame
-
-local CrosshairDistanceLabel = Instance.new("TextLabel")
-CrosshairDistanceLabel.Name = "CrosshairDistanceLabel"
-CrosshairDistanceLabel.Text = "自瞄预判距离"
-CrosshairDistanceLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CrosshairDistanceLabel.BackgroundTransparency = 1
-CrosshairDistanceLabel.Position = UDim2.new(0.1, 0, 0.9, 0)
-CrosshairDistanceLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-CrosshairDistanceLabel.Parent = Frame
-
-local CrosshairDistanceSlider = Instance.new("TextBox")
-CrosshairDistanceSlider.Name = "CrosshairDistanceSlider"
-CrosshairDistanceSlider.Text = tostring(crosshairDistance)
-CrosshairDistanceSlider.TextColor3 = Color3.fromRGB(255, 255, 255)
-CrosshairDistanceSlider.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-CrosshairDistanceSlider.Position = UDim2.new(0.1, 0, 1.1, 0)
-CrosshairDistanceSlider.Size = UDim2.new(0.8, 0, 0.2, 0)
-CrosshairDistanceSlider.Parent = Frame
-
-local targetCFrame = Cam.CFrame
-
-local function updateDrawings()
-    local camViewportSize = Cam.ViewportSize
-    FOVring.Position = camViewportSize / 2
-    FOVring.Radius = fov
-end
-
-local function onKeyDown(input)
-    if input.KeyCode == Enum.KeyCode.Delete then
-        RunService:UnbindFromRenderStep("FOVUpdate")
-        FOVring:Remove()
-    end
-end
-
-UserInputService.InputBegan:Connect(onKeyDown)
-
-local function getClosestPlayerInFOV(trg_part)
-    local nearest = nil
-    local last = math.huge
-    local playerMousePos = Cam.ViewportSize / 2
-
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= Players.LocalPlayer then
-            local part = player.Character and player.Character:FindFirstChild(trg_part)
-            if part then
-                local ePos, isVisible = Cam:WorldToViewportPoint(part.Position)
-                local distance = (Vector2.new(ePos.x, ePos.y) - playerMousePos).Magnitude
-
-                if distance < last and isVisible and distance < fov then
-                    last = distance
-                    nearest = player
+            Button.MouseEnter:Connect(
+                function()
+                    TweenService:Create(
+                        Button,
+                        TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
+                    ):Play()
                 end
+            )
+
+            Button.MouseLeave:Connect(
+                function()
+                    TweenService:Create(
+                        Button,
+                        TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
+                    ):Play()
+                end
+            )
+
+            Button.MouseButton1Click:Connect(
+                function()
+                    pcall(callback)
+                end
+            )
+
+            Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+        end
+        function tabcontent:Toggle(text,default, callback)
+            local toggled = false
+
+            local Toggle = Instance.new("TextButton")
+            local ToggleCorner = Instance.new("UICorner")
+            local ToggleTitle = Instance.new("TextLabel")
+            local FrameToggle1 = Instance.new("Frame")
+            local FrameToggle1Corner = Instance.new("UICorner")
+            local FrameToggle2 = Instance.new("Frame")
+            local FrameToggle2Corner = Instance.new("UICorner")
+            local FrameToggle3 = Instance.new("Frame")
+            local FrameToggle3Corner = Instance.new("UICorner")
+            local FrameToggleCircle = Instance.new("Frame")
+            local FrameToggleCircleCorner = Instance.new("UICorner")
+
+            Toggle.Name = "Toggle"
+            Toggle.Parent = Tab
+            Toggle.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+            Toggle.Position = UDim2.new(0.215625003, 0, 0.446271926, 0)
+            Toggle.Size = UDim2.new(0, 363, 0, 42)
+            Toggle.AutoButtonColor = false
+            Toggle.Font = Enum.Font.SourceSans
+            Toggle.Text = ""
+            Toggle.TextColor3 = Color3.fromRGB(0, 0, 0)
+            Toggle.TextSize = 14.000
+            Toggle.BackgroundTransparency = 0.6
+
+            ToggleCorner.CornerRadius = UDim.new(0, 5)
+            ToggleCorner.Name = "ToggleCorner"
+            ToggleCorner.Parent = Toggle
+
+            ToggleTitle.Name = "ToggleTitle"
+            ToggleTitle.Parent = Toggle
+            ToggleTitle.BackgroundColor3 = Color3.fromRGB(139, 0, 255)
+            ToggleTitle.BackgroundTransparency = 1.000
+            ToggleTitle.Position = UDim2.new(0.0358126722, 0, 0, 0)
+            ToggleTitle.Size = UDim2.new(0, 187, 0, 42)
+            ToggleTitle.Font = Enum.Font.Gotham
+            ToggleTitle.Text = text
+            ToggleTitle.TextColor3 = Color3.fromRGB(139, 0, 255)
+            ToggleTitle.TextSize = 14.000
+            ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+            FrameToggle1.Name = "FrameToggle1"
+            FrameToggle1.Parent = Toggle
+            FrameToggle1.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            FrameToggle1.Position = UDim2.new(0.859504104, 0, 0.285714298, 0)
+            FrameToggle1.Size = UDim2.new(0, 37, 0, 18)
+
+            FrameToggle1Corner.Name = "FrameToggle1Corner"
+            FrameToggle1Corner.Parent = FrameToggle1
+
+            FrameToggle2.Name = "FrameToggle2"
+            FrameToggle2.Parent = FrameToggle1
+            FrameToggle2.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+            FrameToggle2.Position = UDim2.new(0.0489999987, 0, 0.0930000022, 0)
+            FrameToggle2.Size = UDim2.new(0, 33, 0, 14)
+
+            FrameToggle2Corner.Name = "FrameToggle2Corner"
+            FrameToggle2Corner.Parent = FrameToggle2
+
+            FrameToggle3.Name = "FrameToggle3"
+            FrameToggle3.Parent = FrameToggle1
+            FrameToggle3.BackgroundColor3 = PresetColor
+            FrameToggle3.BackgroundTransparency = 1.000
+            FrameToggle3.Size = UDim2.new(0, 37, 0, 18)
+
+            FrameToggle3Corner.Name = "FrameToggle3Corner"
+            FrameToggle3Corner.Parent = FrameToggle3
+
+            FrameToggleCircle.Name = "FrameToggleCircle"
+            FrameToggleCircle.Parent = FrameToggle1
+            FrameToggleCircle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            FrameToggleCircle.Position = UDim2.new(0.127000004, 0, 0.222000003, 0)
+            FrameToggleCircle.Size = UDim2.new(0, 10, 0, 10)
+
+            FrameToggleCircleCorner.Name = "FrameToggleCircleCorner"
+            FrameToggleCircleCorner.Parent = FrameToggleCircle
+
+            coroutine.wrap(
+                function()
+                    while wait() do
+                        FrameToggle3.BackgroundColor3 = PresetColor
+                    end
+                end
+            )()
+
+            Toggle.MouseButton1Click:Connect(
+                function()
+                    if toggled == false then
+                        TweenService:Create(
+                            Toggle,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggle1,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundTransparency = 1}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggle2,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundTransparency = 1}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggle3,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundTransparency = 0}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggleCircle,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundColor3 = Color3.fromRGB(139, 0, 255)}
+                        ):Play()
+                        FrameToggleCircle:TweenPosition(
+                            UDim2.new(0.587, 0, 0.222000003, 0),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                    else
+                        TweenService:Create(
+                            Toggle,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggle1,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundTransparency = 0}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggle2,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundTransparency = 0}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggle3,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundTransparency = 1}
+                        ):Play()
+                        TweenService:Create(
+                            FrameToggleCircle,
+                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}
+                        ):Play()
+                        FrameToggleCircle:TweenPosition(
+                            UDim2.new(0.127000004, 0, 0.222000003, 0),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                    end
+                    toggled = not toggled
+                    pcall(callback, toggled)
+                end
+            )
+
+            if default == true then
+                TweenService:Create(
+                    Toggle,
+                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
+                ):Play()
+                TweenService:Create(
+                    FrameToggle1,
+                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundTransparency = 1}
+                ):Play()
+                TweenService:Create(
+                    FrameToggle2,
+                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundTransparency = 1}
+                ):Play()
+                TweenService:Create(
+                    FrameToggle3,
+                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundTransparency = 0}
+                ):Play()
+                TweenService:Create(
+                    FrameToggleCircle,
+                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {BackgroundColor3 = Color3.fromRGB(139, 0, 255)}
+                ):Play()
+                FrameToggleCircle:TweenPosition(
+                    UDim2.new(0.587, 0, 0.222000003, 0),
+                    Enum.EasingDirection.Out,
+                    Enum.EasingStyle.Quart,
+                    .2,
+                    true
+                )
+                toggled = not toggled
             end
+
+            Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
-    end
+        function tabcontent:Slider(text, min, max, start, callback)
+            local dragging = false
+            local Slider = Instance.new("TextButton")
+            local SliderCorner = Instance.new("UICorner")
+            local SliderTitle = Instance.new("TextLabel")
+            local SliderValue = Instance.new("TextLabel")
+            local SlideFrame = Instance.new("Frame")
+            local CurrentValueFrame = Instance.new("Frame")
+            local SlideCircle = Instance.new("ImageButton")
 
-    return nearest
-end
+            Slider.Name = "Slider"
+            Slider.Parent = Tab
+            Slider.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+            Slider.Position = UDim2.new(-0.48035714, 0, -0.570532918, 0)
+            Slider.Size = UDim2.new(0, 363, 0, 60)
+            Slider.AutoButtonColor = false
+            Slider.Font = Enum.Font.SourceSans
+            Slider.Text = ""
+            Slider.TextColor3 = Color3.fromRGB(0, 0, 0)
+            Slider.TextSize = 14.000
+            Slider.BackgroundTransparency = 0.25
 
-RunService.RenderStepped:Connect(function()
-    updateDrawings()
+            SliderCorner.CornerRadius = UDim.new(0, 5)
+            SliderCorner.Name = "SliderCorner"
+            SliderCorner.Parent = Slider
 
-    local closest = getClosestPlayerInFOV("Head")
-    if closest and closest.Character:FindFirstChild("Head") then
-        local targetCharacter = closest.Character
-        local targetHead = targetCharacter.Head
-        local targetRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
+            SliderTitle.Name = "SliderTitle"
+            SliderTitle.Parent = Slider
+            SliderTitle.BackgroundColor3 = Color3.fromRGB(139, 0, 255)
+            SliderTitle.BackgroundTransparency = 1.000
+            SliderTitle.Position = UDim2.new(0.0358126722, 0, 0, 0)
+            SliderTitle.Size = UDim2.new(0, 187, 0, 42)
+            SliderTitle.Font = Enum.Font.Gotham
+            SliderTitle.Text = text
+            SliderTitle.TextColor3 = Color3.fromRGB(139, 0, 255)
+            SliderTitle.TextSize = 14.000
+            SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-        local isMoving = targetRootPart.Velocity.Magnitude > 0.1
+            SliderValue.Name = "SliderValue"
+            SliderValue.Parent = Slider
+            SliderValue.BackgroundColor3 = Color3.fromRGB(139, 0, 255)
+            SliderValue.BackgroundTransparency = 1.000
+            SliderValue.Position = UDim2.new(0.0358126722, 0, 0, 0)
+            SliderValue.Size = UDim2.new(0, 335, 0, 42)
+            SliderValue.Font = Enum.Font.Gotham
+            SliderValue.Text = tostring(start and math.floor((start / max) * (max - min) + min) or 0)
+            SliderValue.TextColor3 = Color3.fromRGB(139, 0, 255)
+            SliderValue.TextSize = 14.000
+            SliderValue.TextXAlignment = Enum.TextXAlignment.Right
 
-        local targetPosition
-        if isMoving then
-            targetPosition = targetHead.Position + (targetHead.CFrame.LookVector * crosshairDistance)
-        else
-            targetPosition = targetHead.Position
-        end
-
-        targetCFrame = CFrame.new(Cam.CFrame.Position, targetPosition)
-    else
-        targetCFrame = Cam.CFrame
-    end
-    Cam.CFrame = Cam.CFrame:Lerp(targetCFrame, 1 / smoothness)
-end)
-
-FovSlider.FocusLost:Connect(function(enterPressed, inputThatCausedFocusLoss)
-    if enterPressed then
-        local newFov = tonumber(FovSlider.Text)
-        if newFov then
-            fov = newFov
-        else
-            FovSlider.Text = tostring(fov)
-        end
-    end
-end)
-
-SmoothnessSlider.FocusLost:Connect(function(enterPressed, inputThatCausedFocusLoss)
-    if enterPressed then
-        local newSmoothness = tonumber(SmoothnessSlider.Text)
-        if newSmoothness then
-            smoothness = newSmoothness
-        else
-            SmoothnessSlider.Text = tostring(smoothness)
-        end
-    end
-end)
-
-CrosshairDistanceSlider.FocusLost:Connect(function(enterPressed, inputThatCausedFocusLoss)
-    if enterPressed then
-        local newCrosshairDistance = tonumber(CrosshairDistanceSlider.Text)
-        if newCrosshairDistance then
-            crosshairDistance = newCrosshairDistance
-        else
-            CrosshairDistanceSlider.Text = tostring(crosshairDistance)
-        end
-    end
-end)
-end})
-
-Tab:AddButton({
-    Name = "修改玩家碰撞体积箱",
-    Callback = function()
-local Close = Instance.new("TextButton")
-local Open2 = Instance.new("ScreenGui")
-local Open = Instance.new("TextButton")
-local FightingGui = Instance.new("ScreenGui")
-local main = Instance.new("Frame")
-local Cre = Instance.new("TextLabel")
-local HitBox = Instance.new("TextBox")
-local Red = Instance.new("TextBox")
-local Green = Instance.new("TextBox")
-local Blue = Instance.new("TextBox")
-local TextLabel = Instance.new("TextLabel")
-
-FightingGui.Name = "FightingGui"
-FightingGui.Parent = game.CoreGui
-FightingGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-
-Open2.Name = "Tools"
-Open2.Parent = game.CoreGui
-Open2.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-Open.Name = "开/关"
-Open.Parent = Open2
-Open.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-Open.Position = UDim2.new(0, 0, 0.451871663, 0)
-Open.Size = UDim2.new(0, 78, 0, 50)
-Open.Font = Enum.Font.SourceSans
-Open.Text = "开/关"
-Open.TextColor3 = Color3.fromRGB(250, 0, 0)
-Open.TextScaled = true
-Open.TextSize = 14.000
-Open.TextWrapped = true
-Open.MouseButton1Down:Connect(function()
- FightingGui.Enabled = true
-end)
-
-Close.Name = "Close"
-Close.Parent = main
-Close.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-Close.Position = UDim2.new(1, 0, -0.226244345, 0)
-Close.Size = UDim2.new(0, 60, 0, 50)
-Close.Font = Enum.Font.SourceSans
-Close.Text = "X"
-Close.TextColor3 = Color3.fromRGB(0, 0, 0)
-Close.TextScaled = true
-Close.TextSize = 14.000
-Close.TextWrapped = true
-Close.MouseButton1Down:Connect(function()
- FightingGui.Enabled = false
-end)
-
-main.Parent = FightingGui
-main.Active = true
-main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-main.Position = UDim2.new(0.073011741, 0, 0.237333342, 0)
-main.Size = UDim2.new(0, 273, 0, 221)
-main.Draggable = true
-
-Cre.Name = "Cre"
-Cre.Parent = main
-Cre.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-Cre.Position = UDim2.new(0, 0, -0.226244345, 0)
-Cre.Size = UDim2.new(0, 273, 0, 50)
-Cre.Font = Enum.Font.SourceSans
-Cre.Text = "修改人物碰撞体积箱"
-Cre.TextColor3 = Color3.fromRGB(0, 0, 0)
-Cre.TextScaled = true
-Cre.TextSize = 14.000
-Cre.TextWrapped = true
-
-HitBox.Name = "输入"
-HitBox.Parent = main
-HitBox.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-HitBox.Position = UDim2.new(0.0586080588, 0, 0.0995475128, 0)
-HitBox.Size = UDim2.new(0, 65, 0, 50)
-HitBox.Font = Enum.Font.SourceSans
-HitBox.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-HitBox.PlaceholderText = "输入"
-HitBox.Text = ""
-HitBox.TextColor3 = Color3.fromRGB(0, 0, 0)
-HitBox.TextScaled = true
-HitBox.TextSize = 14.000
-HitBox.TextWrapped = true
-
-Red.Name = "红色"
-Red.Parent = main
-Red.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-Red.Position = UDim2.new(0.485832304, 0, 0.0995475128, 0)
-Red.Size = UDim2.new(0, 37, 0, 31)
-Red.Font = Enum.Font.SourceSans
-Red.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-Red.PlaceholderText = "红色"
-Red.Text = ""
-Red.TextColor3 = Color3.fromRGB(0, 0, 0)
-Red.TextSize = 14.000
-
-Green.Name = "绿色"
-Green.Parent = main
-Green.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-Green.Position = UDim2.new(0.665319502, 0, 0.0995475128, 0)
-Green.Size = UDim2.new(0, 37, 0, 31)
-Green.Font = Enum.Font.SourceSans
-Green.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-Green.PlaceholderText = "绿色"
-Green.Text = ""
-Green.TextColor3 = Color3.fromRGB(0, 0, 0)
-Green.TextSize = 14.000
-
-TextLabel.Parent = main
-TextLabel.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-TextLabel.Position = UDim2.new(0.47118023, 0, 0.325791866, 0)
-TextLabel.Size = UDim2.new(0, 140, 0, 37)
-TextLabel.Font = Enum.Font.SourceSans
-TextLabel.Text = "颜色"
-TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-TextLabel.TextScaled = true
-TextLabel.TextSize = 14.000
-TextLabel.TextWrapped = true
-
-Blue.Name = "蓝色"
-Blue.Parent = main
-Blue.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
-Blue.Position = UDim2.new(0.837480664, 0, 0.0995475128, 0)
-Blue.Size = UDim2.new(0, 37, 0, 31)
-Blue.Font = Enum.Font.SourceSans
-Blue.PlaceholderColor3 = Color3.fromRGB(0, 0, 0)
-Blue.PlaceholderText = "蓝色"
-Blue.Text = ""
-Blue.TextColor3 = Color3.fromRGB(0, 0, 0)
-Blue.TextSize = 14.000
-game:GetService("RunService").RenderStepped:connect(function()
- for i,v in next, game:GetService("Players"):GetPlayers() do
-  if v.Name ~= game:GetService("Players").LocalPlayer.Name then
-   v.Character.HumanoidRootPart.Size = Vector3.new(HitBox.Text,HitBox.Text,HitBox.Text)
-   v.Character.HumanoidRootPart.Transparency = 0.8
-   v.Character.HumanoidRootPart.Color = Color3.new(Red.Text,Green.Text,Blue.Text)
-   v.Character.HumanoidRootPart.Material = "Neon"
-   v.Character.HumanoidRootPart.CanCollide = false
-  end
- end
-end)
-end})
-
-Tab:AddButton({
-    Name = "防甩飞",
-    Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/ChinaQY/Scripts/Main/AntiFling.lua"))()
-end})
-
-Tab:AddButton({
-    Name = "国服马可",
-    Callback = function()
-loadstring(game:HttpGet("https://pastebin.com/raw/r97d7dS0"))()
-end})
-
-Tab:AddToggle({
-    Name = "夜视",
-    Default = false,
-    Callback = function(Value)
-    if Value then
-        game.Lighting.Ambient = Color3.new(1, 1, 1)
-    else
-        game.Lighting.Ambient = Color3.new(0, 0, 0)
-    end
-end})
-
-Tab:AddButton({
-    Name = "夜视",
-    Callback = function()
-local Light = game:GetService("Lighting")
-
-function dofullbright()
-Light.Ambient 
+            SlideFrame.Name = "Sl
