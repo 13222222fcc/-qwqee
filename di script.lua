@@ -30,21 +30,16 @@ Tab:AddLabel("此脚本为缝合")
 Tab:AddLabel("此脚本完全免费禁止倒卖")
 Tab:AddLabel("QQ群 : 834856433")
 Tab:AddLabel("DC群组 : https://discord.gg/KxZX9pP6vh")
+Tab:AddLabel（"DC用的是情云的"）
 
 local Tab = Window:MakeTab({
-      Name = "通用功能",
+      Name = "通用",
       Icon = "rbxassetid://14250466898",
       PremiumOnly = false
 })
 
 Tab:AddButton({
-    Name = "IY Dex修复版",
-    Callback = function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-end})
-
-Tab:AddButton({
-    Name = "普京比例",
+    Name = "普京比例(部分服务器有bug)",
     Callback = function()
 getgenv().Resolution = {
     [".gg/scripters"] = 0.65
@@ -80,7 +75,7 @@ getgenv().gg_scripters = "g5s"
 end})
 
 Tab:AddButton({
-    Name = "锁定人物视角",
+    Name = "锁人物视角",
     Callback = function()
 local ShiftlockStarterGui = Instance.new("ScreenGui")
 local ImageButton = Instance.new("ImageButton")
@@ -326,25 +321,25 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/
 end})
 
 Tab:AddButton({
-    Name = "IY指令 ( 中文版 )",
+    Name = "IY指令 ( 中文版 ) 中文版跟英文版没啥区别",
     Callback = function()
 loadstring(game:HttpGet(utf8.char((function() return table.unpack({104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,87,97,110,103,122,104,101,104,97,111,104,47,102,108,121,45,97,119,97,121,47,109,97,105,110,47,37,69,54,37,56,67,37,56,55,37,69,52,37,66,66,37,56,65,37,69,52,37,66,56,37,65,68,37,69,54,37,57,54,37,56,55,46,116,120,116})end)())))()
 end})
 
 Tab:AddButton({
-    Name = "撸管R6",
+    Name = "撸R6😍😍😍",
     Callback = function()
 loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
 end})
 
 Tab:AddButton({
-    Name = "撸管R15",
+    Name = "撸R15😍😍😍",
     Callback = function()
 loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
 end})
 
 Tab:AddButton({
-    Name = "自瞄 ( 头部 )",
+    Name = "自瞄 ( 头 )",
     Callback = function()
 getgenv().Camlock_Settings = {
     Prediction = 0,
@@ -363,7 +358,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/elxocasXD/Trip-Hub/ma
 end})
 
 Tab:AddButton({
-    Name = "自瞄 ( 身体 )",
+    Name = "自瞄 ( 身 )",
     Callback = function()
 getgenv().Camlock_Settings = {
     Prediction = 0,
@@ -884,12 +879,6 @@ Tab:AddButton({
 loadstring(game:HttpGet("https://raw.githubusercontent.com/ChinaQY/Scripts/Main/AntiFling.lua"))()
 end})
 
-Tab:AddButton({
-    Name = "国服马可",
-    Callback = function()
-loadstring(game:HttpGet("https://pastebin.com/raw/r97d7dS0"))()
-end})
-
 Tab:AddToggle({
     Name = "夜视",
     Default = false,
@@ -928,18 +917,6 @@ Tab:AddButton({
     Default = false,
     Callback = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/MZEEN2424/Graphics/main/Graphics.xml"))()
-end})
-
-Tab:AddButton({
-    Name = "飞车",
-    Callback = function()
-loadstring(game:HttpGet("https://pastebin.com/raw/MHE1cbWF"))()
-end})
-
-Tab:AddButton({
-    Name = "动作 ( 部分服务器不可用 )",
-    Callback = function()
-loadstring(game:HttpGet("https://pastebin.com/raw/Zj4NnKs6"))()
 end})
 
 Tab:AddButton({
@@ -985,7 +962,7 @@ game.Workspace.Gravity = Value
 end})
 
 Tab:AddToggle({
-    Name = "穿墙",
+    Name = "穿墙(不起作用)",
     Default = false,
     Callback = function(Value)
     if Value then
@@ -1019,7 +996,7 @@ Tab:AddButton({
 end})
 
 Tab:AddButton({
-    Name = "传送玩家",
+    Name = "传送玩家(FE)",
     Callback = function()
 loadstring(game:HttpGet("https://pastebin.com/raw/YNVbeqPy"))()
 end})
@@ -1130,7 +1107,7 @@ onof.BackgroundColor3 = Color3.fromRGB(255, 249, 74)
 onof.Position = UDim2.new(0.702823281, 0, 0.491228074, 0)
 onof.Size = UDim2.new(0, 56, 0, 28)
 onof.Font = Enum.Font.SourceSans
-onof.Text = "fly"
+onof.Text = "飞"
 onof.TextColor3 = Color3.fromRGB(0, 0, 0)
 onof.TextSize = 14.000
 
@@ -1602,12 +1579,6 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/mstudio45/MSDOORS/mai
 end})
 
 Tab:AddButton({
-    Name = "BlackKing汉化版",
-    Callback = function()
-loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
-end})
-
-Tab:AddButton({
     Name = "自动Rooms ( 请先开启所有带自动的功能否则不能自动躲柜子 )",
     Callback = function()
 if game.PlaceId ~= 6839171747 or game.ReplicatedStorage.GameData.Floor.Value ~= "Rooms" then
@@ -1812,7 +1783,7 @@ end
 end})
 
 Tab:AddButton({
-    Name = "生成Rush",
+    Name = "生成Rush(1-13不可用)",
     Callback = function()
 loadstring(game:HttpGet("https://rawscripts.net/raw/DOORS-Custom-Entity-S*er-V2-21705"))()
 end})
@@ -1842,7 +1813,7 @@ loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\114\97\119\46\103\105\116
 end})
 
 Tab:AddButton({
-    Name = "神圣手雷",
+    Name = "手雷",
     Callback = function()
 loadstring(game:HttpGet("https://pastebin.com/raw/u5B1UjGv"))()
 end})
@@ -1866,7 +1837,7 @@ local Tab = Window:MakeTab({
 })
 
 local Section = Tab:AddSection({
-      Name = "情云与DX共同制作"
+      Name = "NO"
 })
 
 Tab:AddButton({
@@ -3718,7 +3689,7 @@ loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/SilkScripts/App
 end})
 
 Tab:AddButton({
-    Name = "FartHub",
+    Name = "FartHub（卡密是meow）",
     Callback = function()
 loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/ivannetta/ShitScripts/main/forsaken.lua")))()
 end})
